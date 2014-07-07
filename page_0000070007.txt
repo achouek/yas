@@ -1,0 +1,105 @@
+OBJECT Page 70007 Object Import Summary
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    Editable=Yes;
+    CaptionML=[ENU=Object Import Summary;
+               ENG=Object Import Summary];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table70000;
+    DelayedInsert=No;
+    PageType=ListPlus;
+    ActionList=ACTIONS
+    {
+      { 1100356013;  ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1100356014;1 ;Action    ;
+                      Name=SelectAll;
+                      CaptionML=ENU=Select all for achive;
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=AllLines;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 SETRANGE("New Object",FALSE);
+                                 MODIFYALL("Create Archive Before import",TRUE);
+                                 SETRANGE("New Object");
+                               END;
+                                }
+      { 1100356015;1 ;Action    ;
+                      Name=DeselectAll;
+                      CaptionML=ENU=Remeove selection;
+                      Promoted=Yes;
+                      Image=CancelAllLines;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 MODIFYALL("Create Archive Before import",FALSE);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1100356002;2;Field  ;
+                SourceExpr=Type;
+                Editable=FALSE }
+
+    { 1100356003;2;Field  ;
+                SourceExpr=ID;
+                Editable=FALSE }
+
+    { 1100356004;2;Field  ;
+                SourceExpr=Name;
+                Editable=FALSE }
+
+    { 1100356008;2;Field  ;
+                SourceExpr="Version List";
+                Editable=FALSE }
+
+    { 1100356006;2;Field  ;
+                SourceExpr=Date;
+                Editable=FALSE }
+
+    { 1100356007;2;Field  ;
+                SourceExpr=Time;
+                Editable=FALSE }
+
+    { 1100356005;2;Field  ;
+                SourceExpr="Create Archive Before import" }
+
+    { 1100356009;2;Field  ;
+                SourceExpr="Existing Version List" }
+
+    { 1100356010;2;Field  ;
+                SourceExpr="Existing Date" }
+
+    { 1100356011;2;Field  ;
+                SourceExpr="Existing Time" }
+
+    { 1100356012;2;Field  ;
+                SourceExpr="New Object" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

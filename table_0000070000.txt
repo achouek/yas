@@ -1,0 +1,601 @@
+OBJECT Table 70000 Object Shadow
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    OnDelete=VAR
+               ObjectMetadataShadow@1100356000 : Record 70001;
+               KeyShadow@1100356001 : Record 70003;
+               FieldShadow@1100356002 : Record 70002;
+             BEGIN
+               ObjectMetadataShadow.SETRANGE("Object Type",Type);
+               ObjectMetadataShadow.SETRANGE("Object ID",ID);
+               ObjectMetadataShadow.SETRANGE("Version No.","Version No.");
+               ObjectMetadataShadow.DELETEALL;
+
+               IF Type = Type::Table THEN
+                 BEGIN
+                   KeyShadow.SETRANGE(TableNo,ID);
+                   KeyShadow.SETRANGE("Version No.","Version No.");
+                   KeyShadow.DELETEALL;
+
+                   FieldShadow.SETRANGE(TableNo,ID);
+                   FieldShadow.SETRANGE("Version No.","Version No.");
+                   FieldShadow.DELETEALL;
+                 END;
+             END;
+
+    PasteIsValid=No;
+    LookupPageID=Page70001;
+    DrillDownPageID=Page70001;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Type                ;Option        ;CaptionML=[ENU=Type;
+                                                              ENG=Type];
+                                                   OptionCaptionML=[ENU=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ENG=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber];
+                                                   OptionString=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber }
+    { 2   ;   ;Company Name        ;Text30        ;CaptionML=[ENU=Company Name;
+                                                              ENG=Company Name] }
+    { 3   ;   ;ID                  ;Integer        }
+    { 4   ;   ;Name                ;Text30        ;CaptionML=[ENU=Name;
+                                                              ENG=Name] }
+    { 5   ;   ;Modified            ;Boolean       ;CaptionML=[ENU=Modified;
+                                                              ENG=Modified] }
+    { 6   ;   ;Compiled            ;Boolean       ;CaptionML=[ENU=Compiled;
+                                                              ENG=Compiled] }
+    { 7   ;   ;BLOB Reference      ;BLOB          ;CaptionML=[ENU=BLOB Reference;
+                                                              ENG=BLOB Reference] }
+    { 8   ;   ;BLOB Size           ;Integer       ;CaptionML=[ENU=BLOB Size;
+                                                              ENG=BLOB Size] }
+    { 9   ;   ;DBM Table No.       ;Integer       ;CaptionML=[ENU=DBM Table No.;
+                                                              ENG=DBM Table No.] }
+    { 10  ;   ;Date                ;Date          ;CaptionML=[ENU=Date;
+                                                              ENG=Date] }
+    { 11  ;   ;Time                ;Time          ;CaptionML=[ENU=Time;
+                                                              ENG=Time] }
+    { 12  ;   ;Version List        ;Text80        ;CaptionML=[ENU=Version List;
+                                                              ENG=Version List] }
+    { 40  ;   ;Locked              ;Boolean       ;CaptionML=[ENU=Locked;
+                                                              ENG=Locked] }
+    { 50  ;   ;Locked By           ;Text132       ;CaptionML=[ENU=Locked By;
+                                                              ENG=Locked By] }
+    { 70000;  ;Version No.         ;Integer       ;CaptionML=[ENU=Version No.;
+                                                              ENG=Version No.] }
+    { 70001;  ;Archived at         ;DateTime      ;CaptionML=[ENU=Archived at;
+                                                              ENG=Archived at] }
+    { 70002;  ;Archived by         ;Code50        ;CaptionML=[ENU=Archived by;
+                                                              ENG=Archived by] }
+    { 70003;  ;Last restore        ;DateTime      ;CaptionML=[ENU=Last restore;
+                                                              ENG=Last restore] }
+    { 70004;  ;Restore count       ;Integer       ;CaptionML=[ENU=Restore count;
+                                                              ENG=Restore count] }
+    { 70005;  ;No. Of Fields       ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Field Shadow" WHERE (TableNo=FIELD(ID),
+                                                                                           Version No.=FIELD(Version No.)));
+                                                   CaptionML=[ENU=No. Of Fields;
+                                                              ENG=No. Of Fields];
+                                                   Editable=No }
+    { 70006;  ;No. Of Keys         ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Key Shadow" WHERE (TableNo=FIELD(ID),
+                                                                                         Version No.=FIELD(Version No.)));
+                                                   CaptionML=[ENU=No. Of Keys;
+                                                              ENG=No. Of Keys] }
+    { 70007;  ;Restored by         ;Code50        ;CaptionML=[ENU=Restored by;
+                                                              ENG=Restored by] }
+    { 70008;  ;Object FOB          ;BLOB          ;CaptionML=[ENU=Object FOB;
+                                                              ENG=Object FOB] }
+    { 70009;  ;Create Archive Before import;Boolean;
+                                                   CaptionML=[ENU=Create Archive Before import;
+                                                              ENG=Create Archive Before import] }
+    { 70010;  ;Existing Version List;Text80       ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object."Version List" WHERE (Type=FIELD(Type),
+                                                                                                   Company Name=FIELD(Company Name),
+                                                                                                   ID=FIELD(ID)));
+                                                   CaptionML=[ENU=Existing Version List;
+                                                              ENG=Existing Version List];
+                                                   Editable=No }
+    { 70011;  ;Existing Date       ;Date          ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object.Date WHERE (Type=FIELD(Type),
+                                                                                         Company Name=FIELD(Company Name),
+                                                                                         ID=FIELD(ID)));
+                                                   CaptionML=[ENU=Existing Date;
+                                                              ENG=Existing Date];
+                                                   Editable=No }
+    { 70012;  ;Existing Time       ;Time          ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(Object.Time WHERE (Type=FIELD(Type),
+                                                                                         Company Name=FIELD(Company Name),
+                                                                                         ID=FIELD(ID)));
+                                                   CaptionML=[ENU=Existing Time;
+                                                              ENG=Existing Time];
+                                                   Editable=No }
+    { 70013;  ;New Object          ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=-Exist(Object WHERE (Type=FIELD(Type),
+                                                                                    Company Name=FIELD(Company Name),
+                                                                                    ID=FIELD(ID)));
+                                                   CaptionML=[ENU=New Object;
+                                                              ENG=New Object];
+                                                   Editable=No }
+  }
+  KEYS
+  {
+    {    ;Type,Company Name,ID,Version No.        ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1100356000 : TextConst 'ENU=Do you want to restore the version %1?;ENG=Do you want to restore the version %1?';
+      Text002@1100356002 : TextConst 'ENU=Object type %1 is not supported.;ENG=Object type %1 is not supported.';
+
+      SqlText@1100356001 : TextConst
+        'ENU="INSERT [dbo].[Object] (
+
+    [Type],
+
+    [Company Name],
+
+    [ID],
+
+    [Name],
+
+    [Modified],
+
+    [Compiled],
+
+    [BLOB Reference],
+
+    [BLOB Size],
+
+    [DBM Table No_],
+
+    [Date],
+
+    [Time],
+
+    [Version List],
+
+    [Locked],
+
+    [Locked By]
+
+    )
+
+    SELECT 
+
+    [dbo].[Object Shadow].[Type],
+
+    [dbo].[Object Shadow].[Company Name],
+
+    [dbo].[Object Shadow].[ID],
+
+    [dbo].[Object Shadow].[Name],
+
+    [dbo].[Object Shadow].[Modified],
+
+    [dbo].[Object Shadow].[Compiled],
+
+    [dbo].[Object Shadow].[BLOB Reference],
+
+    [dbo].[Object Shadow].[BLOB Size],
+
+    [dbo].[Object Shadow].[DBM Table No_],
+
+    [dbo].[Object Shadow].[Date],
+
+    [dbo].[Object Shadow].[Time],
+
+    [dbo].[Object Shadow].[Version List],
+
+    [dbo].[Object Shadow].[Locked],
+
+    [dbo].[Object Shadow].[Locked By]
+
+    FROM [dbo].[Object Shadow] WHERE 
+
+    [dbo].[Object Shadow].[Type] = %1 AND
+
+    [dbo].[Object Shadow].[ID] = %2 AND
+
+    [dbo].[Object Shadow].[Version No_] = %3"',
+        'ENG="INSERT [dbo].[Object] (
+
+    [Type],
+
+    [Company Name],
+
+    [ID],
+
+    [Name],
+
+    [Modified],
+
+    [Compiled],
+
+    [BLOB Reference],
+
+    [BLOB Size],
+
+    [DBM Table No_],
+
+    [Date],
+
+    [Time],
+
+    [Version List],
+
+    [Locked],
+
+    [Locked By]
+
+    )
+
+    SELECT 
+
+    [dbo].[Object Shadow].[Type],
+
+    [dbo].[Object Shadow].[Company Name],
+
+    [dbo].[Object Shadow].[ID],
+
+    [dbo].[Object Shadow].[Name],
+
+    [dbo].[Object Shadow].[Modified],
+
+    [dbo].[Object Shadow].[Compiled],
+
+    [dbo].[Object Shadow].[BLOB Reference],
+
+    [dbo].[Object Shadow].[BLOB Size],
+
+    [dbo].[Object Shadow].[DBM Table No_],
+
+    [dbo].[Object Shadow].[Date],
+
+    [dbo].[Object Shadow].[Time],
+
+    [dbo].[Object Shadow].[Version List],
+
+    [dbo].[Object Shadow].[Locked],
+
+    [dbo].[Object Shadow].[Locked By]
+
+    FROM [dbo].[Object Shadow] WHERE 
+
+    [dbo].[Object Shadow].[Type] = %1 AND
+
+    [dbo].[Object Shadow].[ID] = %2 AND
+
+    [dbo].[Object Shadow].[Version No_] = %3"';
+      Text003@1100356003 : TextConst 'ENU=Key compare: %1 version: %2;ENG=Key compare: %1 version: %2';
+      Text004@1100356004 : TextConst 'ENU=Field compare: %1 version: %2;ENG=Field compare: %1 version: %2';
+      RestoreCheckBuffer@1100356005 : TEMPORARY Record 70005;
+      SqlText2@1100356006 : TextConst 'ENU="DELETE FROM [dbo].[Object] WHERE 
+
+    [dbo].[Object].[Type] = %1 AND
+
+    [dbo].[Object].[ID] = %2";ENG="DELETE FROM [dbo].[Object] WHERE 
+
+    [dbo].[Object].[Type] = %1 AND
+
+    [dbo].[Object].[ID] = %2"';
+      Text005@1100356007 : TextConst 'ENU=Object restore from FOB...;ENG=Object restore from FOB...';
+
+    PROCEDURE SeveVersion@1100356000(_Object@1100356000 : Record 2000000001);
+    VAR
+      ObjectArchiveSetup@1100356009 : Record 70006;
+      ObjectShadow@1100356001 : Record 70000;
+      LastVersionNo@1100356002 : Integer;
+      ObjectMetadata@1100356004 : Record 2000000071;
+      ObjectMetadataShadow@1100356003 : Record 70001;
+      Key@1100356005 : Record 2000000063;
+      KeyShadow@1100356006 : Record 70003;
+      Field@1100356007 : Record 2000000041;
+      FieldShadow@1100356008 : Record 70002;
+      ObjectArchExpImpMgt@1100356010 : Codeunit 70001;
+    BEGIN
+      IF NOT (_Object.Type IN [Type::Table,Type::Page,Type::Report,Type::Codeunit,Type::Query,Type::XMLport,Type::MenuSuite]) THEN
+        ERROR(Text002,_Object.Type);
+
+      ObjectArchiveSetup.GET;
+
+      _Object.SETRECFILTER;
+      _Object.CALCFIELDS("BLOB Reference");
+
+      ObjectShadow.SETRANGE(Type,_Object.Type);
+      ObjectShadow.SETRANGE("Company Name",_Object."Company Name");
+      ObjectShadow.SETRANGE(ID,_Object.ID);
+      IF ObjectShadow.FINDLAST THEN
+        LastVersionNo := ObjectShadow."Version No.";
+
+      ObjectShadow.INIT;
+      ObjectShadow.TRANSFERFIELDS(_Object);
+      ObjectShadow."Version No." := LastVersionNo + 1;
+      ObjectShadow."Archived at" := CURRENTDATETIME;
+      ObjectShadow."Archived by" := COPYSTR(UPPERCASE(USERID),1,MAXSTRLEN("Archived by"));
+      ObjectShadow.INSERT;
+
+      ObjectMetadata.GET(_Object.Type,_Object.ID);
+      ObjectMetadata.CALCFIELDS(Metadata);
+      ObjectMetadata.CALCFIELDS("User Code");
+      ObjectMetadata.CALCFIELDS("User AL Code");
+
+      ObjectMetadataShadow.INIT;
+      ObjectMetadataShadow.TRANSFERFIELDS(ObjectMetadata);
+      ObjectMetadataShadow."Version No." := LastVersionNo + 1;
+      ObjectMetadataShadow.INSERT;
+
+      //tables
+      IF _Object.Type = _Object.Type::Table THEN
+        BEGIN
+          Key.SETRANGE(TableNo,_Object.ID);
+          IF Key.FINDSET THEN
+            REPEAT
+              KeyShadow.INIT;
+                KeyShadow.TRANSFERFIELDS(Key);
+                KeyShadow."Version No." := LastVersionNo + 1;
+              KeyShadow.INSERT;
+            UNTIL Key.NEXT = 0;
+
+          Field.SETRANGE(TableNo,_Object.ID);
+          IF Field.FINDSET THEN
+            REPEAT
+              FieldShadow.INIT;
+                FieldShadow.TRANSFERFIELDS(Field);
+                FieldShadow."Type Integer" := Field.Type;
+                FieldShadow."Type Text" := FORMAT(Field.Type);
+                FieldShadow."Version No." := LastVersionNo + 1;
+              FieldShadow.INSERT;
+            UNTIL Field.NEXT = 0;
+        END;
+      //fob copy
+      IF ObjectArchiveSetup."Save a FOB copy with arhive" THEN
+        ObjectArchExpImpMgt.SilentExport(_Object,ObjectShadow);
+    END;
+
+    PROCEDURE CheckBeforeRestore@1100356004();
+    BEGIN
+      IF Type <> Type::Table THEN
+        EXIT;
+
+      RestoreCheckBuffer.DELETEALL;
+
+      CompareKeys(TRUE);
+      CompareFields(TRUE);
+
+      IF RestoreCheckBuffer.COUNT > 0 THEN
+        BEGIN
+          PAGE.RUNMODAL(PAGE::"Object Archive Setup",RestoreCheckBuffer);
+          ERROR('');
+        END;
+    END;
+
+    PROCEDURE RestoreVersion@1100356001();
+    VAR
+      Object@1100356002 : Record 2000000001;
+      ObjectMetadata@1100356001 : Record 2000000071;
+      ObjectMetadataShadow@1100356000 : Record 70001;
+      RecRef@1100356003 : RecordRef;
+      ADOConn@1100356005 : DotNet "'System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.SqlClient.SqlConnection";
+      ADOCommand@1100356004 : DotNet "'System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.SqlClient.SqlCommand";
+      TypeIntCast@1100356006 : Integer;
+      Key@1100356010 : Record 2000000063;
+      KeyShadow@1100356009 : Record 70003;
+      Field@1100356008 : Record 2000000041;
+      FieldShadow@1100356007 : Record 70002;
+      ObjectArchiveSQLMgt@1100356011 : Codeunit 70000;
+    BEGIN
+      IF NOT (Type IN [Type::Table,Type::Page,Type::Report,Type::Codeunit,Type::Query,Type::XMLport,Type::MenuSuite]) THEN
+        ERROR(Text002,Type);
+
+      IF NOT CONFIRM(Text001,FALSE,"Version No.") THEN
+        EXIT;
+
+      CheckBeforeRestore;
+
+      IF ((Type <> Type::Table) AND Object.GET(Type,"Company Name",ID)) THEN
+         Object.DELETE;
+      //SQL
+      COMMIT;
+
+      //[dbo].[Object Shadow].[Type] = %1 AND
+      //[dbo].[Object Shadow].[ID] = %2 AND
+      //[dbo].[Object Shadow].[Version No_] = %3
+
+      TypeIntCast := Type;
+      IF Type = Type:: Table THEN    //delete table
+        BEGIN
+          ADOConn := ADOConn.SqlConnection(ObjectArchiveSQLMgt.GetConnString);
+          ADOConn.Open;
+
+          ADOCommand := ADOConn.CreateCommand();
+          ADOCommand.CommandText := STRSUBSTNO(SqlText2,TypeIntCast,ID);
+
+          ADOCommand.CommandType := 1;
+          ADOCommand.CommandTimeout := 0;
+          ADOCommand.ExecuteReader;
+          ADOConn.Close;
+          CLEAR(ADOCommand);
+          CLEAR(ADOConn);
+        END;
+
+      ADOConn := ADOConn.SqlConnection(ObjectArchiveSQLMgt.GetConnString);
+      ADOConn.Open;
+      ADOCommand := ADOConn.CreateCommand();
+      ADOCommand.CommandText := STRSUBSTNO(SqlText,TypeIntCast,ID,"Version No.");
+
+      ADOCommand.CommandType := 1;
+      ADOCommand.CommandTimeout := 0;
+      ADOCommand.ExecuteReader;
+      ADOConn.Close;
+
+      //no field support in middle tier :(
+      IF Type = Type::Table THEN
+        BEGIN
+          //changed keys are showstoppers
+          ObjectArchiveSQLMgt.Init(ID);
+          //Field
+          FieldShadow.SETRANGE(TableNo,ID);
+          FieldShadow.SETRANGE("Version No.","Version No.");
+          IF FieldShadow.FINDSET THEN
+            REPEAT
+              IF Field.GET(FieldShadow.TableNo,FieldShadow."No.") THEN
+                BEGIN
+                  IF Field.Len < FieldShadow.Len THEN BEGIN
+                    ObjectArchiveSQLMgt.ChangeFieldLength(FieldShadow);
+                  END;
+                END ELSE BEGIN
+                  //new
+                  ObjectArchiveSQLMgt.AddNewField(FieldShadow);
+                END;
+            UNTIL FieldShadow.NEXT = 0;
+
+           ObjectArchiveSQLMgt.ImplementChanges;
+        END;
+
+      ObjectMetadataShadow.GET(Type,ID,"Version No.");
+      ObjectMetadataShadow.CALCFIELDS(Metadata);
+      ObjectMetadataShadow.CALCFIELDS("User Code");
+      ObjectMetadataShadow.CALCFIELDS("User AL Code");
+
+      IF NOT ObjectMetadata.GET(Type,ID) THEN
+        ObjectMetadata.INIT;
+
+      ObjectMetadata.TRANSFERFIELDS(ObjectMetadataShadow);
+      IF NOT ObjectMetadata.INSERT THEN
+        ObjectMetadata.MODIFY;
+
+      "Last restore" := CURRENTDATETIME;
+      "Restore count" += 1;
+      "Restored by" := COPYSTR(UPPERCASE(USERID),1,MAXSTRLEN("Archived by"));
+      MODIFY;
+    END;
+
+    PROCEDURE RestoreVersionFromFob@1100356005();
+    VAR
+      ObjectArchExpImpMgt@1100356000 : Codeunit 70001;
+      Window@1100356001 : Dialog;
+    BEGIN
+      IF NOT (Type IN [Type::Table,Type::Page,Type::Report,Type::Codeunit,Type::Query,Type::XMLport,Type::MenuSuite]) THEN
+        ERROR(Text002,Type);
+
+      IF NOT CONFIRM(Text001,FALSE,"Version No.") THEN
+        EXIT;
+
+      Window.OPEN(Text005);
+      ObjectArchExpImpMgt.SilentImport(Rec);
+      Window.CLOSE;
+      "Last restore" := CURRENTDATETIME;
+      "Restore count" += 1;
+      "Restored by" := COPYSTR(UPPERCASE(USERID),1,MAXSTRLEN("Archived by"));
+      MODIFY;
+    END;
+
+    PROCEDURE CompareFields@1100356002(_OnlyCheck@1100356004 : Boolean);
+    VAR
+      CompareBuffer@1100356000 : TEMPORARY Record 70004;
+      Field@1100356001 : Record 2000000041;
+      FieldShadow@1100356002 : Record 70002;
+      CompPage@1100356003 : Page 70005;
+    BEGIN
+      IF Type <> Type::Table THEN
+        EXIT;
+
+      Field.SETRANGE(TableNo,ID);
+      IF Field.FINDSET THEN
+        REPEAT
+          CompareBuffer.AddSourceLineField(Field."No.",
+                                           Field.FieldName,
+                                           FORMAT(Field.Type),
+                                           Field.Len,
+                                           FORMAT(Field.Class));
+        UNTIL Field.NEXT = 0;
+
+      FieldShadow.SETRANGE(TableNo,ID);
+      FieldShadow.SETRANGE("Version No.","Version No.");
+      IF FieldShadow.FINDSET THEN
+        REPEAT
+          CompareBuffer.AddCompareLineField(FieldShadow."No.",FieldShadow.FieldName,
+                                           FieldShadow."Type Text",
+                                           FieldShadow.Len,
+                                           FORMAT(FieldShadow.Class));
+        UNTIL FieldShadow.NEXT = 0;
+
+      CompareBuffer.RESET;
+      CompareBuffer.CalcResultField;
+
+      IF _OnlyCheck THEN
+        BEGIN
+          CompareBuffer.SETRANGE(Critical,TRUE);
+          IF CompareBuffer.FINDSET THEN
+            REPEAT
+               RestoreCheckBuffer.InsertLine(CompareBuffer,Field.TABLECAPTION);
+            UNTIL CompareBuffer.NEXT = 0;
+        END ELSE BEGIN
+          CompPage.InitPage(STRSUBSTNO(Text004,Name,"Version No."));
+          IF CompareBuffer.FINDSET THEN
+            REPEAT
+              CompPage.FillData(CompareBuffer);
+            UNTIL CompareBuffer.NEXT = 0;
+
+          CompPage.RUN;
+        END;
+    END;
+
+    PROCEDURE CompareKeys@1100356003(_OnlyCheck@1100356004 : Boolean);
+    VAR
+      CompareBuffer@1100356003 : TEMPORARY Record 70004;
+      Key@1100356002 : Record 2000000063;
+      KeyShadow@1100356001 : Record 70003;
+      CompPage@1100356000 : Page 70004;
+    BEGIN
+      IF Type <> Type::Table THEN
+        EXIT;
+
+      Key.SETRANGE(TableNo,ID);
+      IF Key.FINDSET THEN
+        REPEAT
+          CompareBuffer.AddSourceLineKey(Key."No.",Key.Key);
+        UNTIL Key.NEXT = 0;
+
+      KeyShadow.SETRANGE(TableNo,ID);
+      KeyShadow.SETRANGE("Version No.","Version No.");
+      IF KeyShadow.FINDSET THEN
+        REPEAT
+          CompareBuffer.AddCompareLineKey(KeyShadow."No.",KeyShadow.Key,0);
+        UNTIL KeyShadow.NEXT = 0;
+
+      CompareBuffer.RESET;
+      CompareBuffer.CalcResultKey;
+      IF _OnlyCheck THEN
+        BEGIN
+          CompareBuffer.SETRANGE(Critical,TRUE);
+          IF CompareBuffer.FINDSET THEN
+            REPEAT
+              RestoreCheckBuffer.InsertLine(CompareBuffer,Key.TABLECAPTION);
+            UNTIL CompareBuffer.NEXT = 0;
+        END ELSE BEGIN
+          CompPage.InitPage(STRSUBSTNO(Text003,Name,"Version No."));
+          IF CompareBuffer.FINDSET THEN
+            REPEAT
+              CompPage.FillData(CompareBuffer);
+            UNTIL CompareBuffer.NEXT = 0;
+          CompPage.RUN;
+        END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

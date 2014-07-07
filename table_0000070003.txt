@@ -1,0 +1,42 @@
+OBJECT Table 70003 Key Shadow
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+  }
+  FIELDS
+  {
+    { 1   ;   ;TableNo             ;Integer        }
+    { 2   ;   ;No.                 ;Integer        }
+    { 3   ;   ;TableName           ;Text30         }
+    { 4   ;   ;Key                 ;Text250        }
+    { 5   ;   ;SumIndexFields      ;Text250        }
+    { 6   ;   ;SQLIndex            ;Text250        }
+    { 7   ;   ;Enabled             ;Boolean        }
+    { 8   ;   ;MaintainSQLIndex    ;Boolean        }
+    { 9   ;   ;MaintainSIFTIndex   ;Boolean        }
+    { 10  ;   ;Clustered           ;Boolean        }
+    { 70000;  ;Version No.         ;Integer        }
+  }
+  KEYS
+  {
+    {    ;TableNo,No.,Version No.                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

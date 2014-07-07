@@ -1,0 +1,57 @@
+OBJECT Page 70002 Object Archive FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    SourceTable=Table70000;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Field  ;
+                CaptionML=[ENU=Archived at;
+                           ENG=Archived at];
+                SourceExpr=DT2DATE("Archived at") }
+
+    { 1100356005;1;Field  ;
+                CaptionML=[ENU=" - Time";
+                           ENG=" - Time"];
+                SourceExpr=FORMAT(DT2TIME("Archived at"),0,'<Hours24>:<Minutes,2>') }
+
+    { 1100356002;1;Field  ;
+                SourceExpr="Archived by" }
+
+    { 1100356003;1;Field  ;
+                CaptionML=[ENU=Last restore;
+                           ENG=Last restore];
+                SourceExpr=DT2DATE("Last restore") }
+
+    { 1100356006;1;Field  ;
+                CaptionML=[ENU=" - Time";
+                           ENG=" - Time"];
+                SourceExpr=FORMAT(DT2TIME("Last restore"),0,'<Hours24>:<Minutes,2>') }
+
+    { 1100356007;1;Field  ;
+                SourceExpr="Restored by" }
+
+    { 1100356004;1;Field  ;
+                SourceExpr="Restore count" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,326 @@
+OBJECT Codeunit 70001 Object Arch. Exp/Imp Mgt.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      Text001@1100356009 : TextConst 'ENU=Can`t export multiple object types at one go.;ENG=Can`t export multiple object types at one go.';
+      Text002@1100356010 : TextConst 'ENU=Please close the Developer Environment to return...;ENG=Please close the Developer Environment to return...';
+      Text003@1100356011 : TextConst 'ENU=Save...;ENG=Save...';
+      Text004@1100356012 : TextConst 'ENU=Dynamics NAV Object Format (*.fob)|*.fob;ENG=Dynamics NAV Object Format (*.fob)|*.fob';
+      Text005@1100356013 : TextConst 'ENU=%1 object(s) exported.;ENG=%1 object(s) exported.';
+      Text006@1100356014 : TextConst 'ENU=Do you want to recomple the selected object(s)?;ENG=Do you want to recomple the selected object(s)?';
+      Text007@1100356015 : TextConst 'ENU=%1 object(s) recompiled.;ENG=%1 object(s) exported.';
+      Text008@1100356016 : TextConst 'ENU=Open...;ENG=Open...';
+      Text009@1100356017 : TextConst 'ENU=Import complete.;ENG=Import complete.';
+      Text010@1100356007 : TextConst 'ENU=Exporting objects...\ \Object    #1##############;ENG=Exporting objects...\ \Object    #1##############';
+      Text011@1100356019 : TextConst 'ENU=Reading objects... \ \ Count #1#######;ENG=Reading objects... \ \ Count #1#######';
+      Text012@1100356020 : TextConst 'ENU="Something went wrong during the external application call. ";ENG="Something went wrong during the external application call. "';
+      Text013@1100356021 : TextConst 'ENU=Archiving objects...\ \Object #1##### #2###### #3##################;ENG=Archiving objects...\ \Object #1##### #2###### #3##################';
+      ExportObj@1100356005 : TextConst 'ENU="command=exportobjects, file=""%1"", servername=""%2"", database=""%3"", filter=""%4"", ntauthentication=1"';
+      ImportObj@1100356004 : TextConst 'ENU="command=importobjects, file=""%1"", servername=""%2"", database=""%3"", ImportAction=overwrite"';
+      CompileObj@1100356003 : TextConst 'ENU="command=compileobjects, servername=""%1"", database=""%2"", filter=""%3"""';
+      DesignObj@1100356008 : TextConst 'ENU="servername=""%1"", database=""%2"", designobject=""%3 %4"""';
+      ObjectArchiveSetup@1100356001 : Record 70006;
+      FINSQL@1100356000 : Text;
+      ServerName@1100356002 : Text;
+      DatabaseName@1100356006 : Text;
+      EOFText@1100356018 : TextConst 'ENU=';
+
+    PROCEDURE ExportObject@1100356001(VAR _Object@1100356000 : Record 2000000001);
+    VAR
+      xObject@1100356001 : Record 2000000001;
+      ObjectShadow@1100356004 : Record 70000;
+      FilterText@1100356002 : Text;
+      FileDialog@1100356003 : DotNet "'System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Windows.Forms.SaveFileDialog" RUNONCLIENT;
+      Window@1100356005 : Dialog;
+    BEGIN
+      GetSetup();
+      Window.OPEN(Text010);
+      WITH _Object DO
+        BEGIN
+          FINDSET;
+          xObject := _Object;
+          REPEAT
+            Window.UPDATE(1,_Object.Name);
+            BuildObjectFilter(_Object,xObject,FilterText);
+            xObject := _Object;
+
+            IF ObjectArchiveSetup."Save version befor export" THEN
+              ObjectShadow.SeveVersion(_Object);
+
+          UNTIL NEXT = 0;
+          FileDialog := FileDialog.SaveFileDialog();
+          FileDialog.Title := Text003;
+          FileDialog.Filter := Text004;
+          IF FORMAT(FileDialog.ShowDialog()) = 'OK' THEN BEGIN
+            RunCommandOnClient(FINSQL,
+            STRSUBSTNO(ExportObj,FileDialog.FileName,ServerName,DatabaseName,FilterText),FALSE);
+
+            MESSAGE(Text005,COUNT);
+          END;
+          Window.CLOSE;
+        END;
+    END;
+
+    PROCEDURE ImportObject@1100356002();
+    VAR
+      FileDialog@1100356000 : DotNet "'System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Windows.Forms.OpenFileDialog" RUNONCLIENT;
+      StreamReader@1100356001 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.IO.StreamReader" RUNONCLIENT;
+      ObjectShadowBuffer@1100356002 : TEMPORARY Record 70000;
+      TempText@1100356006 : Text;
+      Line1@1100356003 : Text;
+      Line2@1100356004 : Text;
+      FirstLine@1100356005 : Boolean;
+      i@1100356007 : Integer;
+      Window@1100356008 : Dialog;
+      Object@1100356009 : Record 2000000001;
+      ObjectShadow@1100356010 : Record 70000;
+    BEGIN
+      GetSetup();
+
+      FileDialog := FileDialog.OpenFileDialog();
+      FileDialog.Multiselect := FALSE;
+      FileDialog.CheckFileExists := TRUE;
+      FileDialog.Title := Text008;
+      FileDialog.Filter := Text004;
+
+      IF FORMAT(FileDialog.ShowDialog) = 'OK' THEN
+        BEGIN
+           //import overview
+           IF ObjectArchiveSetup."Show Import Overview" THEN
+             BEGIN
+                Window.OPEN(Text011);
+                StreamReader := StreamReader.StreamReader(FileDialog.FileName);
+                FirstLine := TRUE;
+                REPEAT
+                  Window.UPDATE(1,i);
+                  TempText := StreamReader.ReadLine;
+                  IF STRPOS(TempText,EOFText) = 0 THEN
+                    IF FirstLine THEN BEGIN
+                       FirstLine := FALSE;
+                       Line1 := TempText;
+                    END ELSE BEGIN  //second line
+                       FirstLine := TRUE;
+                       Line2 := TempText;
+                       InsertObjectOverviewLine(ObjectShadowBuffer,Line1,Line2);
+                       i += 1;
+                       Window.UPDATE(1,i);
+                    END;
+                UNTIL (StreamReader.EndOfStream OR (STRPOS(TempText,EOFText) <> 0));
+                Window.CLOSE;
+                IF PAGE.RUNMODAL(70007,ObjectShadowBuffer) <> ACTION::LookupOK THEN
+                  ERROR('');
+
+                ObjectShadowBuffer.SETRANGE("Create Archive Before import",TRUE);
+                ObjectShadowBuffer.SETRANGE("New Object",FALSE);
+                IF ObjectShadowBuffer.FINDSET THEN BEGIN
+                  Window.OPEN(Text013);
+                  REPEAT
+                    Window.UPDATE(1,ObjectShadowBuffer.Type);
+                    Window.UPDATE(2,ObjectShadowBuffer.ID);
+                    Window.UPDATE(3,ObjectShadowBuffer.Name);
+
+                    Object.GET(ObjectShadowBuffer.Type,ObjectShadowBuffer."Company Name",ObjectShadowBuffer.ID);
+                    Object.SETRECFILTER;
+                    ObjectShadow.SeveVersion(Object);
+                  UNTIL ObjectShadowBuffer.NEXT = 0;
+                  Window.CLOSE;
+                END;
+             END;
+
+           RunCommandOnClient(FINSQL,
+           STRSUBSTNO(ImportObj,FileDialog.FileName,ServerName,DatabaseName),TRUE);
+
+           //ToDo: chcek the results before say OK
+           MESSAGE(Text009);
+        END;
+    END;
+
+    PROCEDURE CompileObject@1100356003(VAR _Object@1100356000 : Record 2000000001);
+    VAR
+      xObject@1100356002 : Record 2000000001;
+      FilterText@1100356001 : Text;
+    BEGIN
+      GetSetup();
+
+      WITH _Object DO
+        BEGIN
+          FINDSET;
+          xObject := _Object;
+          REPEAT
+            BuildObjectFilter(_Object,xObject,FilterText);
+            xObject := _Object;
+          UNTIL NEXT = 0;
+
+          IF CONFIRM(Text006,FALSE) THEN BEGIN
+            RunCommandOnClient(FINSQL,
+            STRSUBSTNO(CompileObj,ServerName,DatabaseName,FilterText),FALSE);
+
+            MESSAGE(Text007,COUNT);
+          END;
+        END;
+    END;
+
+    PROCEDURE DesignObject@1100356000(_Object@1100356000 : Record 2000000001);
+    VAR
+      Window@1100356001 : Dialog;
+    BEGIN
+      GetSetup();
+
+      Window.OPEN(Text002);
+        RunCommandOnClient(FINSQL,
+        STRSUBSTNO(DesignObj,ServerName,DatabaseName,FORMAT(_Object.Type),FORMAT(_Object.ID)),TRUE);
+      Window.CLOSE;
+    END;
+
+    LOCAL PROCEDURE BuildObjectFilter@1100356006(_ObjectToAdd@1100356000 : Record 2000000001;_xObjectToAdd@1100356002 : Record 2000000001;VAR _FilterText@1100356001 : Text);
+    VAR
+      TxtInit@1100356003 : TextConst 'ENU="Type=%1;ID=%2"';
+    BEGIN
+      IF _ObjectToAdd.Type <> _xObjectToAdd.Type THEN
+        ERROR(Text001,_xObjectToAdd.Type);
+
+      //Dummy filter - ToDo #1: handle ranges
+      IF _FilterText = '' THEN
+        _FilterText := STRSUBSTNO(TxtInit,FORMAT(_ObjectToAdd.Type),FORMAT(_ObjectToAdd.ID))
+      ELSE
+        _FilterText += '|'+FORMAT(_ObjectToAdd.ID);
+    END;
+
+    PROCEDURE SilentExport@1100356007(VAR _Object@1100356001 : Record 2000000001;VAR _ObjectShadow@1100356009 : Record 70000);
+    VAR
+      xObject@1100356004 : Record 2000000001;
+      FilterText@1100356003 : Text;
+      FileManagement@1100356000 : Codeunit 419;
+      TempFile@1100356002 : Text;
+      UploadResult@1100356005 : Boolean;
+      NVInStream@1100356006 : InStream;
+      NVOutStream@1100356007 : OutStream;
+      ErrorMEssage@1100356008 : Text;
+    BEGIN
+      GetSetup();
+
+      WITH _Object DO
+        BEGIN
+          xObject := _Object;
+          BuildObjectFilter(_Object,xObject,FilterText);
+          xObject := _Object;
+
+          TempFile := FileManagement.ClientTempFileName('fob');
+          RunCommandOnClient(FINSQL,STRSUBSTNO(ExportObj,TempFile,ServerName,DatabaseName,FilterText),FALSE);
+
+          UploadResult := UPLOADINTOSTREAM('','','',TempFile,NVInStream);
+          IF UploadResult THEN BEGIN
+            _ObjectShadow."Object FOB".CREATEOUTSTREAM(NVOutStream);
+            COPYSTREAM(NVOutStream,NVInStream);
+            _ObjectShadow.MODIFY;
+          END;
+          ErrorMEssage := GETLASTERRORTEXT;
+          IF ErrorMEssage <> '' THEN BEGIN
+            CLEARLASTERROR;
+            ERROR(ErrorMEssage);
+          END;
+        END;
+    END;
+
+    PROCEDURE SilentImport@1100356008(VAR _ObjectShadow@1100356001 : Record 70000);
+    VAR
+      FileManagement@1100356004 : Codeunit 419;
+      TempFile@1100356003 : Text;
+      NVInStream@1100356002 : InStream;
+      FileDialog@1100356000 : DotNet "'System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Windows.Forms.OpenFileDialog" RUNONCLIENT;
+    BEGIN
+      GetSetup();
+      IF NOT _ObjectShadow."Object FOB".HASVALUE THEN
+        EXIT;
+
+      TempFile := FileManagement.ClientTempFileName('fob');
+      _ObjectShadow.CALCFIELDS("Object FOB");
+      _ObjectShadow."Object FOB".CREATEINSTREAM(NVInStream);
+      DOWNLOADFROMSTREAM(NVInStream,'','','',TempFile);
+
+      RunCommandOnClient(FINSQL,
+      STRSUBSTNO(ImportObj,TempFile,ServerName,DatabaseName),FALSE);
+
+      //MESSAGE(Text009);
+    END;
+
+    LOCAL PROCEDURE RunCommandOnClient@1100356004(_FileToExec@1100356000 : Text;_Args@1100356001 : Text;_ShowWindow@1100356005 : Boolean);
+    VAR
+      Proc@1100356004 : DotNet "'System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Diagnostics.Process" RUNONCLIENT;
+      ProcStartInfo@1100356003 : DotNet "'System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Diagnostics.ProcessStartInfo" RUNONCLIENT;
+      ProcStatWindwStyle@1100356002 : DotNet "'System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Diagnostics.ProcessWindowStyle" RUNONCLIENT;
+    BEGIN
+      Proc := Proc.Process();
+      ProcStartInfo := ProcStartInfo.ProcessStartInfo();
+      IF _ShowWindow THEN
+        ProcStartInfo.WindowStyle := ProcStatWindwStyle.Normal
+      ELSE
+        ProcStartInfo.WindowStyle := ProcStatWindwStyle.Hidden;
+      ProcStartInfo.FileName := _FileToExec;
+      ProcStartInfo.Arguments := _Args;
+
+      Proc.StartInfo := ProcStartInfo;
+      Proc.Start();
+      Proc.WaitForExit();
+
+      IF Proc.ExitCode = 0 THEN
+        ERROR(Text012); //Proc.StandardOutput.ReadToEnd() ???
+    END;
+
+    LOCAL PROCEDURE GetSetup@1100356005();
+    BEGIN
+      ObjectArchiveSetup.GET;
+      ObjectArchiveSetup.TESTFIELD("Database Server");
+      ObjectArchiveSetup.TESTFIELD("Database Name");
+      ObjectArchiveSetup.TESTFIELD("Local Finsql directory");
+
+      ServerName := ObjectArchiveSetup."Database Server";
+      DatabaseName := ObjectArchiveSetup."Database Name";
+      FINSQL:=  ObjectArchiveSetup."Local Finsql directory"+'\finsql.exe';
+    END;
+
+    LOCAL PROCEDURE InsertObjectOverviewLine@1100356009(VAR _Buffer@1100356000 : TEMPORARY Record 70000;_Line1@1100356001 : Text;_Line2@1100356002 : Text);
+    BEGIN
+      WITH _Buffer DO
+        BEGIN
+          INIT;
+          //Type
+          EVALUATE(Type,DELCHR(COPYSTR(_Line1,1,10),'=',' '));
+          //ObjectID
+          EVALUATE(ID,DELCHR(COPYSTR(_Line1,11,10),'=',' '));
+          //Object Name
+          Name := COPYSTR(_Line1,22,52-23);
+          //Date
+          EVALUATE(Date,DELCHR(COPYSTR(_Line1,57,63-57),'=',' '));
+          //Time
+          EVALUATE(Time,DELCHR(COPYSTR(_Line1,71,79-71),'=',' '));
+          //Size
+          EVALUATE("BLOB Size",DELCHR(COPYSTR(_Line2,13,21-13),'=',' '));
+          //Version List
+          "Version List" := COPYSTR(_Line2,22,80-23);
+          CALCFIELDS("New Object");
+          IF NOT "New Object" THEN
+            "Create Archive Before import" := ObjectArchiveSetup."Save version before import";
+          INSERT;
+        END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

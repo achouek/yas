@@ -1,0 +1,250 @@
+OBJECT Page 1309 Mini Posted Sales Invoices
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Posted Sales Invoices;
+               FRA=Factures vente enregistrÇes];
+    SourceTable=Table112;
+    PageType=List;
+    CardPageID=Mini Posted Sales Invoice;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Correct,Invoice;
+                                FRA=Nouveau,Traitement,êtat,Correct,Facture];
+    OnOpenPage=VAR
+                 FileManagement@1000 : Codeunit 419;
+               BEGIN
+                 SetSecurityFilterOnRespCenter;
+
+                 AllowDotNetAddIn := FileManagement.CanRunDotNetOnClient;
+               END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000003;  ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 11      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Correct;
+                                 FRA=Corriger] }
+      { 16      ;2   ;Action    ;
+                      Name=CorrectInvoice;
+                      CaptionML=[ENU=Correct;
+                                 FRA=Corriger];
+                      ToolTipML=[ENU=Create a new open version of this posted sales invoice where you can make the correction. This posted sales invoice will be canceled.;
+                                 FRA=CrÇez une nouvelle version ouverte de cette facture vente validÇe dans laquelle vous pourrez apporter la correction. Cette facture vente validÇe sera annulÇe.];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Undo;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 CODEUNIT.RUN(CODEUNIT::"Correct PstdSalesInv (Yes/No)",Rec);
+                               END;
+                                }
+      { 14      ;2   ;Action    ;
+                      Name=CancelInvoice;
+                      CaptionML=[ENU=Cancel;
+                                 FRA=Annuler];
+                      ToolTipML=[ENU=Create and post a sales credit memo that reverses this posted sales invoice. This posted sales invoice will be canceled.;
+                                 FRA=CrÇez et validez un avoir vente qui contrepasse cette facture vente validÇe. Cette facture vente validÇe sera annulÇe.];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Cancel;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 CODEUNIT.RUN(CODEUNIT::"Cancel PstdSalesInv (Yes/No)",Rec);
+                               END;
+                                }
+      { 8       ;2   ;Action    ;
+                      Name=CreateCreditMemo;
+                      CaptionML=[ENU=Create Corrective Credit Memo;
+                                 FRA=CrÇer un avoir de correction];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=CreateCreditMemo;
+                      PromotedCategory=Category4;
+                      OnAction=VAR
+                                 SalesHeader@1001 : Record 36;
+                                 CorrectPostedSalesInvoice@1000 : Codeunit 1303;
+                               BEGIN
+                                 CorrectPostedSalesInvoice.CreateCreditMemoCopyDocument(Rec,SalesHeader);
+                                 PAGE.RUN(PAGE::"Mini Sales Credit Memo",SalesHeader);
+                               END;
+                                }
+      { 12      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Send;
+                                 FRA=Envoyer] }
+      { 33      ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=&Print;
+                                 FRA=Im&primer];
+                      ToolTipML=[ENU=Print the selected posted sales document.;
+                                 FRA=Imprimez le document vente validÇ sÇlectionnÇ.];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Print;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 SalesInvHeader@1102 : Record 112;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(SalesInvHeader);
+                                 SalesInvHeader.PrintRecords(NOT AllowDotNetAddIn);
+                               END;
+                                }
+      { 4       ;2   ;Action    ;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Send PDF by &Email;
+                                 FRA=Envoyer PDF par &e-mail];
+                      ToolTipML=[ENU=Attach the selected posted sales document to an email to the customer.;
+                                 FRA=Joignez le document vente validÇ sÇlectionnÇ Ö un e-mail adressÇ au client.];
+                      Promoted=Yes;
+                      Visible=AllowDotNetAddIn;
+                      PromotedIsBig=Yes;
+                      Image=SendEmailPDF;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ReportDistributionManagement@1000 : Codeunit 452;
+                               BEGIN
+                                 ReportDistributionManagement.EmailDocumentReport(Rec);
+                               END;
+                                }
+      { 20      ;2   ;Action    ;
+                      Name=SaveCopy;
+                      CaptionML=[ENU=&Save PDF Document;
+                                 FRA=&Enregistrer document PDF];
+                      ToolTipML=[ENU=Save the posted sales document to your computer. You can then attach it to the email that you send to the customer.;
+                                 FRA=Enregistrez le document vente validÇ sur votre ordinateur. Vous pouvez ensuite le joindre Ö l'e-mail adressÇ au client.];
+                      Promoted=Yes;
+                      Visible=NOT AllowDotNetAddIn;
+                      PromotedIsBig=Yes;
+                      Image=Save;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 ReportDistributionManagement@1000 : Codeunit 452;
+                               BEGIN
+                                 ReportDistributionManagement.SaveDocumentReport(Rec);
+                               END;
+                                }
+      { 19      ;1   ;ActionGroup;
+                      CaptionML=[ENU=Invoice;
+                                 FRA=Facture];
+                      Image=Invoice }
+      { 3       ;2   ;Action    ;
+                      ShortCutKey=Shift+F7;
+                      CaptionML=[ENU=Customer;
+                                 FRA=Client];
+                      ToolTipML=[ENU=View or edit detailed information about the customer on the selected posted sales document.;
+                                 FRA=Affichez ou modifiez des informations dÇtaillÇes concernant le client sur le document vente validÇ sÇlectionnÇ.];
+                      RunObject=Page 1300;
+                      RunPageLink=No.=FIELD(Sell-to Customer No.);
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Customer;
+                      PromotedCategory=Category5 }
+      { 10      ;2   ;Action    ;
+                      Name=ShowCreditMemo;
+                      CaptionML=[ENU=Show Corrective Credit Memo;
+                                 FRA=Afficher un avoir correctif];
+                      ToolTipML=[ENU=Open the posted sales credit memo that was created when you canceled the selected posted sales invoice.;
+                                 FRA=Ouvrez l'avoir vente validÇ qui a ÇtÇ crÇÇ lorsque vous avez annulÇ la facture vente validÇe sÇlectionnÇe.];
+                      RunObject=Page 1322;
+                      RunPageLink=No.=FIELD(Canceled By);
+                      Promoted=Yes;
+                      Enabled=Canceled;
+                      PromotedIsBig=Yes;
+                      Image=CreditMemo;
+                      PromotedCategory=Category5 }
+      { 25      ;2   ;Action    ;
+                      CaptionML=[ENU=&Navigate;
+                                 FRA=&Naviguer];
+                      ToolTipML=[ENU=Find all entries and documents that exist for the document number and posting date on the selected posted sales document.;
+                                 FRA=Recherchez toutes les Çcritures et les documents qui existent pour le numÇro de document et la date de comptabilisation sur le document vente validÇ sÇlectionnÇ.];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Navigate;
+                      PromotedCategory=Category5;
+                      OnAction=BEGIN
+                                 Navigate;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 2   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the posted invoice number.;
+                           FRA=SpÇcifie le numÇro de facture enregistrÇe.];
+                SourceExpr="No." }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Customer Name;
+                           FRA=Nom client];
+                ToolTipML=[ENU=Specifies the name of the customer that you shipped the items on the invoice to.;
+                           FRA=Affiche le nom du client auquel vous avez expÇdiÇ les articles qui figurent sur la facture initiale.];
+                SourceExpr="Sell-to Customer Name" }
+
+    { 1102601007;2;Field  ;
+                ToolTipML=[ENU=Specifies the date on which the invoice is due for payment. The program calculates the date using the Payment Terms Code and Posting Date fields on the sales header.;
+                           FRA=Indique la date Ö laquelle la facture doit àtre payÇe. Le programme calcule la date Ö l'aide des champs Code condition paiement et Date comptabilisation de l'en-tàte vente.];
+                SourceExpr="Due Date" }
+
+    { 13  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total, in the currency of the invoice, of the amounts on all the invoice lines. The amount does not include VAT.;
+                           FRA=Indique le total des montants de toutes les lignes facture, dans la devise de la facture. Ce montant n'inclut pas la TVA.];
+                SourceExpr=Amount;
+                OnDrillDown=BEGIN
+                              SETRANGE("No.");
+                              PAGE.RUNMODAL(PAGE::"Mini Posted Sales Invoice",Rec)
+                            END;
+                             }
+
+    { 15  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the total of the amounts in all the amount fields on the invoice, in the currency of the invoice. The amount includes VAT.;
+                           FRA=Indique le total des montants de tous les champs montants de la facture, dans la devise de la facture. Le montant inclut la TVA.];
+                SourceExpr="Amount Including VAT";
+                OnDrillDown=BEGIN
+                              SETRANGE("No.");
+                              PAGE.RUNMODAL(PAGE::"Mini Posted Sales Invoice",Rec)
+                            END;
+                             }
+
+    { 5   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the amount that remains to be paid for the posted sales invoice.;
+                           FRA=SpÇcifie le montant qui reste Ö payer pour la facture vente validÇe.];
+                SourceExpr="Remaining Amount" }
+
+    { 7   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the posted sales invoice is paid.;
+                           FRA=Indique si la facture vente validÇe est payÇe.];
+                SourceExpr=Paid }
+
+    { 9   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies if the posted sales invoice has been either corrected or canceled.;
+                           FRA=Indique si la facture vente validÇe a ÇtÇ corrigÇe ou annulÇe.];
+                SourceExpr=Canceled;
+                LookupPageID=Mini Posted Sales Credit Memos;
+                DrillDownPageID=Mini Posted Sales Credit Memos;
+                Style=Unfavorable;
+                StyleExpr=Canceled }
+
+  }
+  CODE
+  {
+    VAR
+      AllowDotNetAddIn@1000 : Boolean INDATASET;
+
+    BEGIN
+    END.
+  }
+}
+

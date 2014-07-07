@@ -1,0 +1,51 @@
+OBJECT Page 1391 Mini Chart List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Key Performance Indicators;
+               FRA=Indicateurs de performances cl‚s];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table1310;
+    PageType=List;
+    OnQueryClosePage=BEGIN
+                       IF (CloseAction = ACTION::LookupOK) AND NOT Enabled THEN
+                         DIALOG.ERROR(DisabledChartSelectedErr);
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 6000;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 6001;1   ;Group     ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 6002;2   ;Field     ;
+                CaptionML=[ENU=Chart Name;
+                           FRA=Nom graphique];
+                SourceExpr=ChartName;
+                Editable=False }
+
+    { 1   ;2   ;Field     ;
+                SourceExpr=Enabled }
+
+  }
+  CODE
+  {
+    VAR
+      DisabledChartSelectedErr@1000 : TextConst 'ENU=The chart you selected is disabled and cannot be shown on the role center. Enable the selected chart or select another chart.;FRA=Le graphique s‚lectionn‚ est d‚sactiv‚ et ne peut pas ˆtre affich‚ dans le tableau de bord. Activez le graphique s‚lectionn‚ ou choisissez-en un autre.';
+
+    BEGIN
+    END.
+  }
+}
+

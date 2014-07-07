@@ -1,0 +1,59 @@
+OBJECT Table 70005 Restore Check Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Restore Check Buffer;
+               ENG=Restore Check Buffer];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Line No.            ;Integer       ;CaptionML=[ENU=Line No.;
+                                                              ENG=Line No.] }
+    { 2   ;   ;Error Details       ;Text250       ;CaptionML=[ENU=Error Details;
+                                                              ENG=Error Details] }
+  }
+  KEYS
+  {
+    {    ;Line No.                                ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1100356000 : TextConst 'ENU=%1 ID %2 - %3: %4;ENG=%1 ID %2 - %3: %4';
+
+    PROCEDURE InsertLine@1100356000(CompareBuffer@1100356000 : Record 70004;_LineType@1100356002 : Text[30]);
+    VAR
+      NextLineNo@1100356001 : Integer;
+    BEGIN
+      NextLineNo := 10000;
+      IF FINDLAST THEN
+        NextLineNo += "Line No.";
+
+      INIT;
+        "Line No." := NextLineNo;
+        IF CompareBuffer."Source Id" = 0 THEN
+          CompareBuffer."Source Id" := CompareBuffer."Compare Id";
+        IF CompareBuffer."Source Text" = '' THEN
+          CompareBuffer."Source Text" := CompareBuffer."Compare Text";
+
+        "Error Details" := COPYSTR(STRSUBSTNO(Text001,_LineType,CompareBuffer."Source Id",CompareBuffer."Source Text",CompareBuffer.Result)
+        ,1,MAXSTRLEN("Error Details"));
+
+      INSERT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

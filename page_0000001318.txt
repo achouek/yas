@@ -1,0 +1,61 @@
+OBJECT Page 1318 Mini Sales Hist. Sell-to FactB
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Sell-to Customer Sales History;
+               FRA=Historique des ventes - donneur d'ordre];
+    SourceTable=Table18;
+    PageType=CardPart;
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 9   ;1   ;Field     ;
+                CaptionML=[ENU=Open Sales Invoices;
+                           FRA=Factures vente ouvertes];
+                ToolTipML=[ENU=Specifies the number of unposted sales invoices that have been registered for the customer.;
+                           FRA=Indique le nombre factures vente enregistr‚es pour le client.];
+                SourceExpr="No. of Invoices";
+                DrillDownPageID=Mini Sales Invoice List }
+
+    { 13  ;1   ;Field     ;
+                CaptionML=[ENU=Open Sales Credit Memos;
+                           FRA=Avoirs vente ouverts];
+                ToolTipML=[ENU=Specifies the number of unposted sales credit memos that have been registered for the customer.;
+                           FRA=Indique le nombre d'avoirs vente non valid‚s enregistr‚s pour le client.];
+                SourceExpr="No. of Credit Memos";
+                DrillDownPageID=Mini Sales Credit Memos }
+
+    { 17  ;1   ;Field     ;
+                CaptionML=[ENU=Posted Sales Invoices;
+                           FRA=Factures vente enregistr‚es];
+                ToolTipML=[ENU=Specifies the number of posted sales invoices that have been registered for the customer.;
+                           FRA=Indique le nombre de factures vente enregistr‚es pour le client.];
+                SourceExpr="No. of Pstd. Invoices";
+                DrillDownPageID=Mini Posted Sales Invoices }
+
+    { 21  ;1   ;Field     ;
+                CaptionML=[ENU=Posted Sales Credit Memos;
+                           FRA=Avoirs vente enregistr‚s];
+                ToolTipML=[ENU=Specifies the number of posted sales credit memos that have been registered for the customer.;
+                           FRA=Indique le nombre d'avoirs vente valid‚s enregistr‚s pour le client.];
+                SourceExpr="No. of Pstd. Credit Memos";
+                DrillDownPageID=Mini Posted Sales Credit Memos }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

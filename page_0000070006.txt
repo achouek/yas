@@ -1,0 +1,94 @@
+OBJECT Page 70006 Object Archive Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    SourceTable=Table70006;
+    PageType=Card;
+    OnOpenPage=BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+               END;
+
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Group  ;
+                Name=General;
+                CaptionML=[ENU=General;
+                           ENG=General];
+                GroupType=Group }
+
+    { 1100356002;2;Field  ;
+                SourceExpr="Database Server" }
+
+    { 1100356003;2;Field  ;
+                SourceExpr="Database Name" }
+
+    { 1100356004;2;Field  ;
+                SourceExpr="Local Finsql directory";
+                OnAssistEdit=VAR
+                               DirectorySelector@1100356000 : DotNet "'System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Windows.Forms.FolderBrowserDialog" RUNONCLIENT;
+                             BEGIN
+                               DirectorySelector := DirectorySelector.FolderBrowserDialog();
+                               DirectorySelector.ShowNewFolderButton := FALSE;
+                               DirectorySelector.Description := FIELDCAPTION("Local Finsql directory");
+                               IF FORMAT(DirectorySelector.ShowDialog) = 'OK' THEN
+                                 "Local Finsql directory" := DirectorySelector.SelectedPath;
+                             END;
+                              }
+
+    { 1100356012;2;Field  ;
+                SourceExpr="Show Import Overview" }
+
+    { 1100356005;1;Group  ;
+                Name=Archive;
+                CaptionML=[ENU=Archive;
+                           ENG=Archive];
+                GroupType=Group }
+
+    { 1100356006;2;Field  ;
+                SourceExpr="Save version before import" }
+
+    { 1100356007;2;Field  ;
+                SourceExpr="Save version befor export" }
+
+    { 1100356011;2;Field  ;
+                SourceExpr="Save a FOB copy with arhive" }
+
+    { 1100356010;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1100356009;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+    { 1100356008;1;Part   ;
+                Visible=FALSE;
+                PartType=System;
+                SystemPartID=Notes }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

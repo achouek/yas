@@ -1,0 +1,89 @@
+OBJECT Page 70004 Compare Results Key
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Compare Results;
+               ENG=Compare Results];
+    SourceTable=Table70004;
+    PageType=List;
+    SourceTableTemporary=Yes;
+    OnAfterGetRecord=BEGIN
+                       CriticalLine := Critical;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1100356002;2;Field  ;
+                Name=SourceId;
+                CaptionML=ENG=Source Id;
+                SourceExpr="Source Id";
+                Style=StrongAccent;
+                StyleExpr=CriticalLine }
+
+    { 1100356003;2;Field  ;
+                Name=SourceText;
+                CaptionML=ENG=Source Text;
+                SourceExpr="Source Text";
+                Style=StrongAccent;
+                StyleExpr=CriticalLine }
+
+    { 1100356004;2;Field  ;
+                Name=CompareId;
+                SourceExpr="Compare Id";
+                Style=StrongAccent;
+                StyleExpr=CriticalLine }
+
+    { 1100356005;2;Field  ;
+                Name=CompareText;
+                SourceExpr="Compare Text";
+                Style=StrongAccent;
+                StyleExpr=CriticalLine }
+
+    { 1100356006;2;Field  ;
+                SourceExpr=Result;
+                Style=StrongAccent;
+                StyleExpr=CriticalLine }
+
+    { 1100356007;2;Field  ;
+                SourceExpr=Critical;
+                Visible=FALSE }
+
+  }
+  CODE
+  {
+    VAR
+      CriticalLine@1100356000 : Boolean INDATASET;
+
+    PROCEDURE InitPage@1100356000(_caption@1100356000 : Text[100]);
+    BEGIN
+      CurrPage.CAPTION(_caption);
+    END;
+
+    PROCEDURE FillData@1100356001(_inLine@1100356000 : Record 70004);
+    BEGIN
+      INIT;
+        Rec := _inLine;
+      INSERT;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

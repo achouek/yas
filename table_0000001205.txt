@@ -1,0 +1,81 @@
+OBJECT Table 1205 Credit Transfer Register
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/12/13;
+    Time=12:00:00;
+    Version List=NAVW17.10.00.35800;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Identifier,Created Date-Time;
+    CaptionML=[ENU=Credit Transfer Register;
+               FRA=Registre virement];
+    LookupPageID=Page1205;
+    DrillDownPageID=Page1205;
+  }
+  FIELDS
+  {
+    { 1   ;   ;No.                 ;Integer       ;CaptionML=[ENU=No.;
+                                                              FRA=Nø] }
+    { 2   ;   ;Identifier          ;Code20        ;CaptionML=[ENU=Identifier;
+                                                              FRA=Identifiant] }
+    { 3   ;   ;Created Date-Time   ;DateTime      ;CaptionML=[ENU=Created Date-Time;
+                                                              FRA=Date/heure cr‚ation] }
+    { 4   ;   ;Created by User     ;Code50        ;TableRelation=User."User Name";
+                                                   CaptionML=[ENU=Created by User;
+                                                              FRA=Cr‚‚ par l'utilisateur] }
+    { 5   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              FRA=Statut];
+                                                   OptionCaptionML=[ENU=Cancelled,File Created;
+                                                                    FRA=Annul‚,Fichier cr‚‚];
+                                                   OptionString=Cancelled,File Created }
+    { 6   ;   ;No. of Transfers    ;Integer       ;FieldClass=FlowField;
+                                                   CalcFormula=Count("Credit Transfer Entry" WHERE (Credit Transfer Register No.=FIELD(No.)));
+                                                   CaptionML=[ENU=No. of Transfers;
+                                                              FRA=Nbre de transferts] }
+    { 7   ;   ;From Bank Account No.;Code20       ;TableRelation="Bank Account";
+                                                   CaptionML=[ENU=From Bank Account No.;
+                                                              FRA=Nø compte bancaire origine] }
+    { 8   ;   ;From Bank Account Name;Text50      ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Bank Account".Name WHERE (No.=FIELD(From Bank Account No.)));
+                                                   CaptionML=[ENU=From Bank Account Name;
+                                                              FRA=Nom compte bancaire origine] }
+  }
+  KEYS
+  {
+    {    ;No.                                     ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    PROCEDURE CreateNew@1(NewIdentifier@1000 : Code[20];NewBankAccountNo@1001 : Code[20]);
+    BEGIN
+      RESET;
+      LOCKTABLE;
+      IF FINDLAST THEN;
+      INIT;
+      "No." += 1;
+      Identifier := NewIdentifier;
+      "Created Date-Time" := CURRENTDATETIME;
+      "Created by User" := USERID;
+      "From Bank Account No." := NewBankAccountNo;
+      INSERT;
+    END;
+
+    PROCEDURE SetStatus@3(NewStatus@1000 : Option);
+    BEGIN
+      LOCKTABLE;
+      FIND;
+      Status := NewStatus;
+      MODIFY;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

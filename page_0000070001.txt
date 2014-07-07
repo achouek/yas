@@ -1,0 +1,167 @@
+OBJECT Page 70001 Object Shadows
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    InsertAllowed=No;
+    DeleteAllowed=Yes;
+    ModifyAllowed=No;
+    SourceTable=Table70000;
+    DataCaptionFields=Type,ID,Name;
+    PageType=List;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Table tools;
+                                ENG=New,Process,Report,Table tools];
+    OnAfterGetRecord=BEGIN
+                       ShowTableTools := Type = Type::Table;
+                       ShowExportFOB := "Object FOB".HASVALUE;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 1100356008;  ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1100356009;1 ;Action    ;
+                      Name=Restore;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Restore;
+                                 ENG=Restore];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ReOpen;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 RestoreVersion;
+                               END;
+                                }
+      { 1100356016;1 ;Action    ;
+                      Name=SaveFob;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Save FOB;
+                                 ENG=Save FOB];
+                      Promoted=Yes;
+                      Visible=ShowExportFOB;
+                      Image=Save;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 instr@1100356001 : InStream;
+                                 ToFileName@1100356000 : Text;
+                               BEGIN
+                                 CALCFIELDS("Object FOB");
+                                 "Object FOB".CREATEINSTREAM(instr);
+                                 ToFileName := STRSUBSTNO(Text001,FORMAT(Type),FORMAT(ID),FORMAT("Version No."));
+                                 DOWNLOADFROMSTREAM(instr,'Export','','Dyanmics NAV Object File (*.fob)|*.fob',ToFileName)
+                               END;
+                                }
+      { 1100356019;1 ;Action    ;
+                      Name=RestoreFromFob;
+                      CaptionML=[ENU=Restore from FOB;
+                                 ENG=Restore from FOB];
+                      Promoted=Yes;
+                      Visible=ShowExportFOB;
+                      Image=Restore;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 RestoreVersionFromFob;
+                               END;
+                                }
+      { 1100356013;1 ;ActionGroup;
+                      Name=TableTools;
+                      CaptionML=[ENU=Table tools;
+                                 ENG=Table tools];
+                      ActionContainerType=ActionItems }
+      { 1100356014;2 ;Action    ;
+                      Name=CompFields;
+                      CaptionML=ENU=Compare fields;
+                      Promoted=Yes;
+                      Visible=ShowTableTools;
+                      PromotedIsBig=Yes;
+                      Image=SelectField;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 CompareFields(FALSE);
+                               END;
+                                }
+      { 1100356015;2 ;Action    ;
+                      Name=CompKeys;
+                      CaptionML=ENU=Compare keys;
+                      Promoted=Yes;
+                      Visible=ShowTableTools;
+                      PromotedIsBig=Yes;
+                      Image=EncryptionKeys;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 CompareKeys(FALSE);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1100356002;2;Field  ;
+                SourceExpr="Version No." }
+
+    { 1100356003;2;Field  ;
+                SourceExpr=Date }
+
+    { 1100356004;2;Field  ;
+                SourceExpr=Time }
+
+    { 1100356005;2;Field  ;
+                SourceExpr="Version List" }
+
+    { 1100356006;2;Field  ;
+                SourceExpr=Locked }
+
+    { 1100356007;2;Field  ;
+                SourceExpr="Locked By" }
+
+    { 1100356010;2;Field  ;
+                SourceExpr="BLOB Reference" }
+
+    { 1100356011;;Container;
+                ContainerType=FactBoxArea }
+
+    { 1100356012;1;Part   ;
+                CaptionML=[ENU=Version Details;
+                           ENG=Version Details];
+                SubPageLink=Type=FIELD(Type),
+                            Company Name=FIELD(Company Name),
+                            ID=FIELD(ID),
+                            Version No.=FIELD(Version No.);
+                PagePartID=Page70003;
+                PartType=Page }
+
+    { 1100356018;1;Part   ;
+                PartType=System;
+                SystemPartID=Notes }
+
+    { 1100356017;1;Part   ;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+  }
+  CODE
+  {
+    VAR
+      ShowTableTools@1100356000 : Boolean INDATASET;
+      ShowExportFOB@1100356001 : Boolean INDATASET;
+      Text001@1100356002 : TextConst 'ENU=%1_%2_Version_%3.fob;ENG=%1_%2_Version_%3.fob';
+
+    BEGIN
+    END.
+  }
+}
+

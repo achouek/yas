@@ -1,0 +1,180 @@
+OBJECT Page 1358 Mini Posted Purch. Inv. Subfrm
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/11/13;
+    Time=12:00:00;
+    Version List=NAVW17.10.00.35701;
+  }
+  PROPERTIES
+  {
+    Editable=No;
+    CaptionML=[ENU=Lines;
+               FRA=Lignes];
+    LinksAllowed=No;
+    SourceTable=Table123;
+    PageType=ListPart;
+    AutoSplitKey=Yes;
+    OnAfterGetCurrRecord=BEGIN
+                           TotalsOnLinesSubforms.CalculatePostedPurchInvoiceTotals(TotalPurchInvHeader,VATAmount,Rec);
+                         END;
+
+    ActionList=ACTIONS
+    {
+      { 1900000004;0 ;ActionContainer;
+                      ActionContainerType=ActionItems }
+    }
+  }
+  CONTROLS
+  {
+    { 1900000001;0;Container;
+                ContainerType=ContentArea }
+
+    { 1   ;1   ;Group     ;
+                GroupType=Repeater }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=Item No.;
+                           FRA=Nø article];
+                ToolTipML=[ENU=Specifies an item number that identifies the item or a general ledger account number that identifies the general ledger account used when posting the line.;
+                           FRA=Sp‚cifie un num‚ro d'article qui d‚finit un num‚ro de compte g‚n‚ral ou d'article qui identifie le compte g‚n‚ral utilis‚ lors de la validation de la ligne.];
+                SourceExpr="No." }
+
+    { 62  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the cross-reference number related to this item.;
+                           FRA=Affiche le num‚ro de r‚f‚rence externe li‚e … cet article.];
+                SourceExpr="Cross-Reference No.";
+                Visible=FALSE }
+
+    { 6   ;2   ;Field     ;
+                CaptionML=[ENU=Description/Comment;
+                           FRA=Description/Commentaire];
+                ToolTipML=[ENU=Specifies either the name of or a description of the item or general ledger account.;
+                           FRA=Affiche le nom ou la d‚signation de l'article ou du compte g‚n‚ral.];
+                SourceExpr=Description }
+
+    { 8   ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the quantity posted from the line.;
+                           FRA=Sp‚cifie la quantit‚ valid‚e … partir de la ligne.];
+                BlankZero=Yes;
+                SourceExpr=Quantity }
+
+    { 30  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the unit of measure code for the item.;
+                           FRA=Sp‚cifie le code unit‚ de l'article.];
+                SourceExpr="Unit of Measure Code" }
+
+    { 12  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the direct unit cost of one unit of the item.;
+                           FRA=Indique le co–t unitaire direct d'une unit‚ de l'article.];
+                BlankZero=Yes;
+                SourceExpr="Direct Unit Cost" }
+
+    { 16  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the line discount percentage granted on items on each individual line.;
+                           FRA=Indique le pourcentage de remise ligne attribu‚ aux articles pour chaque ligne individuelle.];
+                BlankZero=Yes;
+                SourceExpr="Line Discount %" }
+
+    { 64  ;2   ;Field     ;
+                ToolTipML=[ENU=Specifies the net amount (before subtracting the invoice discount amount) that must be paid for the items. If you have placed a check mark in the Prices Including VAT field, the amount displayed will include VAT.;
+                           FRA=Affiche le montant net (avant soustraction du montant remise facture) … payer pour les articles. Si vous avez activ‚ le champ Prix TTC, le montant affich‚ inclut la TVA.];
+                BlankZero=Yes;
+                SourceExpr="Line Amount" }
+
+    { 24  ;1   ;Group     ;
+                GroupType=FixedLayout }
+
+    { 23  ;2   ;Group     ;
+                GroupType=Group }
+
+    { 22  ;3   ;Field     ;
+                SourceExpr='';
+                Enabled=FALSE;
+                Editable=FALSE }
+
+    { 21  ;1   ;Group     ;
+                GroupType=Group }
+
+    { 20  ;2   ;Group     ;
+                GroupType=GridLayout;
+                Layout=Columns }
+
+    { 19  ;3   ;Group     ;
+                GroupType=Group }
+
+    { 18  ;4   ;Group     ;
+                GroupType=Group }
+
+    { 17  ;5   ;Field     ;
+                Name=Invoice Discount Amount;
+                CaptionML=[ENU=Invoice Discount Amount;
+                           FRA=Montant remise facture];
+                ToolTipML=[ENU=Specifies the amount that is deducted from the value shown in the Total Amount Incl. VAT field.;
+                           FRA=Indique le montant d‚duit de la valeur indiqu‚e dans le champ Total Amount Incl. VAT.];
+                SourceExpr=TotalPurchInvHeader."Invoice Discount Amount";
+                Editable=FALSE }
+
+    { 14  ;3   ;Group     ;
+                GroupType=Group }
+
+    { 15  ;4   ;Group     ;
+                GroupType=Group }
+
+    { 11  ;5   ;Group     ;
+                GroupType=FixedLayout }
+
+    { 13  ;6   ;Group     ;
+                GroupType=Group }
+
+    { 9   ;7   ;Field     ;
+                SourceExpr='';
+                Enabled=FALSE;
+                Editable=FALSE }
+
+    { 10  ;3   ;Group     ;
+                GroupType=Group }
+
+    { 5   ;4   ;Group     ;
+                GroupType=Group }
+
+    { 7   ;5   ;Field     ;
+                Name=Total Amount Excl. VAT;
+                DrillDown=No;
+                ToolTipML=[ENU=Specifies the sum of the value in the Line Amount Excl. VAT field on all lines on the posted purchase invoice minus any discount amount in the Invoice Discount Amount field.;
+                           FRA=Sp‚cifie la somme de la valeur du champ Line Amount Excl. VAT sur toutes les lignes de la facture achat valid‚e moins l'‚ventuel montant remise indiqu‚ dans le champ Invoice Discount Amount.];
+                SourceExpr=TotalPurchInvHeader.Amount;
+                CaptionClass=TotalsOnLinesSubforms.GetTotalExclVATCaption(TotalPurchInvHeader."Currency Code");
+                Editable=FALSE }
+
+    { 2   ;5   ;Field     ;
+                Name=Total VAT Amount;
+                ToolTipML=[ENU=Specifies the sum of VAT amounts on all lines on the posted purchase invoice.;
+                           FRA=Sp‚cifie la somme des montants de TVA sur toutes les lignes de la facture achat valid‚e.];
+                SourceExpr=VATAmount;
+                CaptionClass=TotalsOnLinesSubforms.GetTotalVATCaption(TotalPurchInvHeader."Currency Code");
+                Editable=FALSE }
+
+    { 3   ;5   ;Field     ;
+                Name=Total Amount Incl. VAT;
+                ToolTipML=[ENU=Specifies the sum of the value in the Line Amount field on all lines on the posted purchase invoice minus any discount amount in the Invoice Discount Amount field.;
+                           FRA=Sp‚cifie la somme de la valeur du champ Montant ligne sur toutes les lignes de la facture achat valid‚e moins l'‚ventuel montant remise indiqu‚ dans le champ Montant remise facture.];
+                SourceExpr=TotalPurchInvHeader."Amount Including VAT";
+                CaptionClass=TotalsOnLinesSubforms.GetTotalInclVATCaption(TotalPurchInvHeader."Currency Code");
+                Editable=FALSE;
+                Style=Strong;
+                StyleExpr=TRUE }
+
+  }
+  CODE
+  {
+    VAR
+      TotalPurchInvHeader@1002 : Record 122;
+      TotalsOnLinesSubforms@1001 : Codeunit 1301;
+      VATAmount@1000 : Decimal;
+
+    BEGIN
+    END.
+  }
+}
+

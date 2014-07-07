@@ -1,0 +1,35 @@
+OBJECT Table 1305 Mini Pages Mapping
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Mini Pages Mapping;
+               FRA=Correspondance pages mini];
+  }
+  FIELDS
+  {
+    { 1   ;   ;MainPageID          ;Integer       ;CaptionML=[ENU=MainPageID;
+                                                              FRA=MainPageID] }
+    { 2   ;   ;SubstitutePageID    ;Integer       ;CaptionML=[ENU=SubstitutePageID;
+                                                              FRA=SubstitutePageID] }
+  }
+  KEYS
+  {
+    {    ;MainPageID                              ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

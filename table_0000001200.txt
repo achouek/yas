@@ -1,0 +1,74 @@
+OBJECT Table 1200 Bank Export/Import Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=02/12/13;
+    Time=12:00:00;
+    Version List=NAVW17.10.00.35800;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Name;
+    CaptionML=[ENU=Bank Export/Import Setup;
+               FRA=Paramätres exportation/importation bancaire];
+    LookupPageID=Page1200;
+    DrillDownPageID=Page1200;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code20        ;CaptionML=[ENU=Code;
+                                                              FRA=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Name                ;Text100       ;CaptionML=[ENU=Name;
+                                                              FRA=Nom] }
+    { 3   ;   ;Direction           ;Option        ;CaptionML=[ENU=Direction;
+                                                              FRA=Direction];
+                                                   OptionCaptionML=[ENU=Export,Import;
+                                                                    FRA=Exporter,Importer];
+                                                   OptionString=Export,Import }
+    { 4   ;   ;Processing Codeunit ID;Integer     ;TableRelation=AllObjWithCaption."Object ID" WHERE (Object Type=CONST(Codeunit));
+                                                   CaptionML=[ENU=Processing Codeunit ID;
+                                                              FRA=ID Codeunit traitement] }
+    { 5   ;   ;Processing Codeunit Name;Text80    ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(Codeunit),
+                                                                                                                Object ID=FIELD(Processing Codeunit ID)));
+                                                   CaptionML=[ENU=Processing Codeunit Name;
+                                                              FRA=Nom Codeunit traitement];
+                                                   Editable=No }
+    { 6   ;   ;Processing XMLport ID;Integer      ;TableRelation=AllObjWithCaption."Object ID" WHERE (Object Type=CONST(XMLport));
+                                                   CaptionML=[ENU=Processing XMLport ID;
+                                                              FRA=ID XMLPort traitement] }
+    { 7   ;   ;Processing XMLport Name;Text80     ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(AllObjWithCaption."Object Caption" WHERE (Object Type=CONST(XMLport),
+                                                                                                                Object ID=FIELD(Processing XMLport ID)));
+                                                   CaptionML=[ENU=Processing XMLport Name;
+                                                              FRA=Nom XMLPort traitement];
+                                                   Editable=No }
+    { 8   ;   ;Posting Exch. Def. Code;Code20     ;TableRelation=IF (Direction=CONST(Import)) "Posting Exch. Def".Code WHERE (Type=CONST(Bank Statement Import))
+                                                                 ELSE IF (Direction=CONST(Export)) "Posting Exch. Def".Code WHERE (Type=CONST(Payment Export));
+                                                   CaptionML=[ENU=Posting Exch. Def. Code;
+                                                              FRA=Code appellation Çchge compta.] }
+    { 9   ;   ;Posting Exch. Def. Name;Text100    ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Posting Exch. Def".Name WHERE (Code=FIELD(Posting Exch. Def. Code)));
+                                                   CaptionML=[ENU=Posting Exch. Def. Name;
+                                                              FRA=Nom appellation Çchge compta.];
+                                                   Editable=No }
+    { 10  ;   ;Preserve Non-Latin Characters;Boolean;
+                                                   CaptionML=[ENU=Preserve Non-Latin Characters;
+                                                              FRA=Conserver les caractäres non latins] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

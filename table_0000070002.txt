@@ -1,0 +1,51 @@
+OBJECT Table 70002 Field Shadow
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+  }
+  FIELDS
+  {
+    { 1   ;   ;TableNo             ;Integer        }
+    { 2   ;   ;No.                 ;Integer        }
+    { 3   ;   ;TableName           ;Text30         }
+    { 4   ;   ;FieldName           ;Text30         }
+    { 5   ;   ;Type                ;Option        ;OptionCaptionML=[ENU=TableFilter,RecordID,OemText,Date,Time,DateFormula,Decimal,Text,Code,Binary,BLOB,Boolean,Integer,OemCode,Option,BigInteger,Duration,GUID,DateTime;
+                                                                    ENG=TableFilter,RecordID,OemText,Date,Time,DateFormula,Decimal,Text,Code,Binary,BLOB,Boolean,Integer,OemCode,Option,BigInteger,Duration,GUID,DateTime];
+                                                   OptionString=TableFilter,RecordID,OemText,Date,Time,DateFormula,Decimal,Text,Code,Binary,BLOB,Boolean,Integer,OemCode,Option,BigInteger,Duration,GUID,DateTime }
+    { 6   ;   ;Len                 ;Integer        }
+    { 7   ;   ;Class               ;Option        ;OptionString=Normal,FlowField,FlowFilter }
+    { 8   ;   ;Enabled             ;Boolean        }
+    { 9   ;   ;Type Name           ;Text30         }
+    { 20  ;   ;Field Caption       ;Text80         }
+    { 21  ;   ;RelationTableNo     ;Integer        }
+    { 22  ;   ;RelationFieldNo     ;Integer        }
+    { 23  ;   ;SQLDataType         ;Option        ;OptionString=Varchar,Integer,Variant,BigInteger }
+    { 70000;  ;Version No.         ;Integer        }
+    { 70001;  ;Type Integer        ;Integer       ;CaptionML=[ENU=Type Integer;
+                                                              ENG=Type Integer] }
+    { 70002;  ;Type Text           ;Text80        ;CaptionML=[ENU=Type Text;
+                                                              ENG=Type Text] }
+  }
+  KEYS
+  {
+    {    ;TableNo,No.,Version No.                 ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

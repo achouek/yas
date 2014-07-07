@@ -1,0 +1,50 @@
+OBJECT Table 2000000053 Access Control
+{
+  OBJECT-PROPERTIES
+  {
+    Date=25/05/05;
+    Time=12:00:00;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Access Control;
+               FRA=Contr“le d'accŠs];
+  }
+  FIELDS
+  {
+    { 1   ;   ;User Security ID    ;GUID          ;TableRelation=User."User Security ID";
+                                                   CaptionML=[ENU=User Security ID;
+                                                              FRA=ID s‚curit‚ utilisateur] }
+    { 2   ;   ;Role ID             ;Code20        ;TableRelation="Permission Set"."Role ID";
+                                                   CaptionML=[ENU=Role ID;
+                                                              FRA=ID r“le] }
+    { 3   ;   ;Company Name        ;Text30        ;TableRelation=Company.Name;
+                                                   CaptionML=[ENU=Company Name;
+                                                              FRA=Nom de la soci‚t‚] }
+    { 5   ;   ;User Name           ;Code50        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup(User."User Name" WHERE (User Security ID=FIELD(User Security ID)));
+                                                   CaptionML=[ENU=User Name;
+                                                              FRA=Nom utilisateur] }
+    { 7   ;   ;Role Name           ;Text30        ;FieldClass=FlowField;
+                                                   CalcFormula=Lookup("Permission Set".Name WHERE (Role ID=FIELD(Role ID)));
+                                                   CaptionML=[ENU=Role Name;
+                                                              FRA=Nom r“le] }
+  }
+  KEYS
+  {
+    {    ;User Security ID,Role ID,Company Name   ;Clustered=Yes }
+    {    ;Role ID                                  }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,166 @@
+OBJECT Table 454 Approval Entry
+{
+  OBJECT-PROPERTIES
+  {
+    Date=21/01/14;
+    Time=12:00:00;
+    Version List=NAVW17.10.00.36035;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Approval Entry;
+               FRA=êcriture approbation];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Table ID            ;Integer       ;CaptionML=[ENU=Table ID;
+                                                              FRA=ID table] }
+    { 2   ;   ;Document Type       ;Option        ;CaptionML=[ENU=Document Type;
+                                                              FRA=Type document];
+                                                   OptionCaptionML=[ENU=Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order;
+                                                                    FRA=Devis,Commande,Facture,Avoir,Commande ouverte,Retour];
+                                                   OptionString=Quote,Order,Invoice,Credit Memo,Blanket Order,Return Order }
+    { 3   ;   ;Document No.        ;Code20        ;CaptionML=[ENU=Document No.;
+                                                              FRA=N¯ document] }
+    { 4   ;   ;Sequence No.        ;Integer       ;CaptionML=[ENU=Sequence No.;
+                                                              FRA=N¯ sÇquence] }
+    { 5   ;   ;Approval Code       ;Code20        ;CaptionML=[ENU=Approval Code;
+                                                              FRA=Code approbation] }
+    { 6   ;   ;Sender ID           ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Sender ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Sender ID;
+                                                              FRA=ID Çmetteur] }
+    { 7   ;   ;Salespers./Purch. Code;Code10      ;CaptionML=[ENU=Salespers./Purch. Code;
+                                                              FRA=Code vendeur/acheteur] }
+    { 8   ;   ;Approver ID         ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Approver ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Approver ID;
+                                                              FRA=ID approbateur] }
+    { 9   ;   ;Status              ;Option        ;CaptionML=[ENU=Status;
+                                                              FRA=Statut];
+                                                   OptionCaptionML=[ENU=Created,Open,Canceled,Rejected,Approved;
+                                                                    FRA=CrÇÇ,Ouvert,AnnulÇ,RejetÇ,ApprouvÇ];
+                                                   OptionString=Created,Open,Canceled,Rejected,Approved }
+    { 10  ;   ;Date-Time Sent for Approval;DateTime;
+                                                   CaptionML=[ENU=Date-Time Sent for Approval;
+                                                              FRA=Date-heure envoi pour approbation] }
+    { 11  ;   ;Last Date-Time Modified;DateTime   ;CaptionML=[ENU=Last Date-Time Modified;
+                                                              FRA=Date-heure derniäre modification] }
+    { 12  ;   ;Last Modified By ID ;Code50        ;TableRelation=User."User Name";
+                                                   OnLookup=BEGIN
+                                                              UserMgt.LookupUserID("Last Modified By ID");
+                                                            END;
+
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Last Modified By ID;
+                                                              FRA=Derniäre modification par ID] }
+    { 13  ;   ;Comment             ;Boolean       ;FieldClass=FlowField;
+                                                   CalcFormula=Exist("Approval Comment Line" WHERE (Table ID=FIELD(Table ID),
+                                                                                                    Document Type=FIELD(Document Type),
+                                                                                                    Document No.=FIELD(Document No.)));
+                                                   CaptionML=[ENU=Comment;
+                                                              FRA=Commentaires];
+                                                   Editable=No }
+    { 14  ;   ;Due Date            ;Date          ;CaptionML=[ENU=Due Date;
+                                                              FRA=Date d'ÇchÇance] }
+    { 15  ;   ;Amount              ;Decimal       ;CaptionML=[ENU=Amount;
+                                                              FRA=Montant];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr="Currency Code" }
+    { 16  ;   ;Amount (LCY)        ;Decimal       ;CaptionML=[ENU=Amount (LCY);
+                                                              FRA=Montant DS];
+                                                   AutoFormatType=1 }
+    { 17  ;   ;Currency Code       ;Code10        ;TableRelation=Currency;
+                                                   CaptionML=[ENU=Currency Code;
+                                                              FRA=Code devise] }
+    { 18  ;   ;Approval Type       ;Option        ;CaptionML=[ENU=Approval Type;
+                                                              FRA=Type approbation];
+                                                   OptionCaptionML=[ENU=" ,Sales Pers./Purchaser,Approver";
+                                                                    FRA=" ,Commercial/Acheteur,Approbateur"];
+                                                   OptionString=[ ,Sales Pers./Purchaser,Approver] }
+    { 19  ;   ;Limit Type          ;Option        ;CaptionML=[ENU=Limit Type;
+                                                              FRA=Type limite];
+                                                   OptionCaptionML=[ENU=Approval Limits,Credit Limits,Request Limits,No Limits;
+                                                                    FRA=Limites approbation,Limites crÇdit,Limites demande,Aucune limite];
+                                                   OptionString=Approval Limits,Credit Limits,Request Limits,No Limits }
+    { 20  ;   ;Available Credit Limit (LCY);Decimal;
+                                                   CaptionML=[ENU=Available Credit Limit (LCY);
+                                                              FRA=Limite crÇdit disponible DS] }
+  }
+  KEYS
+  {
+    {    ;Table ID,Document Type,Document No.,Sequence No.;
+                                                   Clustered=Yes }
+    {    ;Approver ID,Status                       }
+    {    ;Sender ID                                }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      UserMgt@1000 : Codeunit 418;
+
+    PROCEDURE ShowDocument@1();
+    VAR
+      SalesHeader@1001 : Record 36;
+      PurchHeader@1000 : Record 38;
+    BEGIN
+      CASE "Table ID" OF
+        DATABASE::"Sales Header":
+          BEGIN
+            IF NOT SalesHeader.GET("Document Type","Document No.") THEN
+              EXIT;
+            CASE "Document Type" OF
+              "Document Type"::Quote:
+                PAGE.RUN(PAGE::"Sales Quote",SalesHeader);
+              "Document Type"::Order:
+                PAGE.RUN(PAGE::"Sales Order",SalesHeader);
+              "Document Type"::Invoice:
+                PAGE.RUN(PAGE::"Sales Invoice",SalesHeader);
+              "Document Type"::"Credit Memo":
+                PAGE.RUN(PAGE::"Sales Credit Memo",SalesHeader);
+              "Document Type"::"Blanket Order":
+                PAGE.RUN(PAGE::"Blanket Sales Order",SalesHeader);
+              "Document Type"::"Return Order":
+                PAGE.RUN(PAGE::"Sales Return Order",SalesHeader);
+            END;
+          END;
+        DATABASE::"Purchase Header":
+          BEGIN
+            IF NOT PurchHeader.GET("Document Type","Document No.") THEN
+              EXIT;
+            CASE "Document Type" OF
+              "Document Type"::Quote:
+                PAGE.RUN(PAGE::"Purchase Quote",PurchHeader);
+              "Document Type"::Order:
+                PAGE.RUN(PAGE::"Purchase Order",PurchHeader);
+              "Document Type"::Invoice:
+                PAGE.RUN(PAGE::"Purchase Invoice",PurchHeader);
+              "Document Type"::"Credit Memo":
+                PAGE.RUN(PAGE::"Purchase Credit Memo",PurchHeader);
+              "Document Type"::"Blanket Order":
+                PAGE.RUN(PAGE::"Blanket Purchase Order",PurchHeader);
+              "Document Type"::"Return Order":
+                PAGE.RUN(PAGE::"Purchase Return Order",PurchHeader);
+            END;
+          END;
+        ELSE
+          EXIT;
+      END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,95 @@
+OBJECT Page 9802 Permission Sets
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Permission Sets;
+               FRA=Ensembles d'autorisations];
+    SourceTable=Table2000000004;
+    PageType=List;
+    ActionList=ACTIONS
+    {
+      { 10      ;    ;ActionContainer;
+                      Name=PermissionActions;
+                      CaptionML=[ENU=Permissions;
+                                 FRA=Autorisations];
+                      ActionContainerType=RelatedInformation }
+      { 7       ;1   ;ActionGroup;
+                      Name=ShowPermissions;
+                      CaptionML=[ENU=Permissions;
+                                 FRA=Autorisations];
+                      Image=Permission }
+      { 6       ;2   ;Action    ;
+                      Name=Permissions;
+                      ShortCutKey=Shift+Ctrl+p;
+                      CaptionML=[ENU=Permissions;
+                                 FRA=Autorisations];
+                      RunObject=Page 9803;
+                      RunPageLink=Role ID=FIELD(Role ID);
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Permission;
+                      PromotedCategory=Process }
+      { 9       ;    ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 5       ;1   ;ActionGroup;
+                      Name=<Functions>;
+                      CaptionML=[ENU=F&unctions;
+                                 FRA=Fonction&s];
+                      Image=Action }
+      { 8       ;2   ;Action    ;
+                      Name=<CopyPermissionSet>;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Copy Permission Set;
+                                 FRA=Copier ensemble d'autorisations];
+                      Image=Copy;
+                      OnAction=VAR
+                                 PermissionSet@1035 : Record 2000000004;
+                                 CopyPermissionSet@1034 : Report 9802;
+                               BEGIN
+                                 PermissionSet.SETRANGE("Role ID","Role ID");
+                                 CopyPermissionSet.SETTABLEVIEW(PermissionSet);
+                                 CopyPermissionSet.RUNMODAL;
+
+                                 IF GET(CopyPermissionSet.GetRoleId) THEN;
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 2   ;1   ;Group     ;
+                Name=Group;
+                CaptionML=[ENU=Permission Set;
+                           FRA=Ensemble d'autorisations];
+                GroupType=Repeater }
+
+    { 3   ;2   ;Field     ;
+                Name=PermissionSet;
+                CaptionML=[ENU=Permission Set;
+                           FRA=Ensemble d'autorisations];
+                SourceExpr="Role ID" }
+
+    { 4   ;2   ;Field     ;
+                Name=<Name>;
+                CaptionML=[ENU=Name;
+                           FRA=Nom];
+                SourceExpr=Name }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

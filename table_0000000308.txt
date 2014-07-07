@@ -1,0 +1,61 @@
+OBJECT Table 308 No. Series
+{
+  OBJECT-PROPERTIES
+  {
+    Date=07/09/12;
+    Time=12:00:00;
+    Version List=NAVW17.00;
+  }
+  PROPERTIES
+  {
+    DataCaptionFields=Code,Description;
+    OnDelete=BEGIN
+               NoSeriesLine.SETRANGE("Series Code",Code);
+               NoSeriesLine.DELETEALL;
+
+               NoSeriesRelationship.SETRANGE(Code,Code);
+               NoSeriesRelationship.DELETEALL;
+               NoSeriesRelationship.SETRANGE(Code);
+
+               NoSeriesRelationship.SETRANGE("Series Code",Code);
+               NoSeriesRelationship.DELETEALL;
+               NoSeriesRelationship.SETRANGE("Series Code");
+             END;
+
+    CaptionML=[ENU=No. Series;
+               FRA=Souches de nø];
+    LookupPageID=Page571;
+    DrillDownPageID=Page571;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              FRA=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              FRA=D‚signation] }
+    { 3   ;   ;Default Nos.        ;Boolean       ;CaptionML=[ENU=Default Nos.;
+                                                              FRA=Nø par d‚faut] }
+    { 4   ;   ;Manual Nos.         ;Boolean       ;CaptionML=[ENU=Manual Nos.;
+                                                              FRA=Nø manuels] }
+    { 5   ;   ;Date Order          ;Boolean       ;CaptionML=[ENU=Date Order;
+                                                              FRA=Ordre chronologique] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      NoSeriesLine@1000 : Record 309;
+      NoSeriesRelationship@1001 : Record 310;
+
+    BEGIN
+    END.
+  }
+}
+

@@ -1,0 +1,311 @@
+OBJECT Table 70004 Compare Buffer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[ENU=Entry No.;
+                                                              ENG=Entry No.] }
+    { 2   ;   ;Source Id           ;Integer       ;CaptionML=[ENU=Source Id;
+                                                              ENG=Source Id] }
+    { 3   ;   ;Source Text         ;Text250       ;CaptionML=[ENU=Source Text;
+                                                              ENG=Source Text] }
+    { 4   ;   ;Compare Id          ;Integer       ;CaptionML=[ENU=Compare Id;
+                                                              ENG=Compare Id] }
+    { 5   ;   ;Compare Text        ;Text250       ;CaptionML=[ENU=Compare Text;
+                                                              ENG=Compare Text] }
+    { 6   ;   ;Result              ;Text30        ;CaptionML=[ENU=Result;
+                                                              ENG=Result] }
+    { 7   ;   ;Critical            ;Boolean       ;CaptionML=[ENU=Critical;
+                                                              ENG=Critical] }
+    { 8   ;   ;Source Type         ;Text30        ;Description=Field }
+    { 9   ;   ;Source Len          ;Integer       ;Description=Field }
+    { 10  ;   ;Compare Type        ;Text30        ;Description=Field }
+    { 11  ;   ;Compare Len         ;Integer       ;Description=Field }
+    { 12  ;   ;Source Field Class  ;Text30        ;Description=Field }
+    { 13  ;   ;Compare Field Class ;Text30        ;Description=Field }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      Text001@1100356000 : TextConst 'ENU=Ok;ENG=Ok';
+      Text002@1100356001 : TextConst 'ENU=Text is different';
+      Text003@1100356002 : TextConst 'ENU=New in version;ENG=New in version';
+      Text004@1100356003 : TextConst 'ENU=New in source;ENG=New in source';
+      Text005@1100356004 : TextConst 'ENU=Field class is different;ENG=Field class is different';
+      Text006@1100356005 : TextConst 'ENU=Field type is different;ENG=Field type is different';
+      Text007@1100356006 : TextConst 'ENU=Source length is bigger;ENG=Source length is bigger';
+      Text008@1100356007 : TextConst 'ENU=New length is bigger;ENG=New length is bigger';
+      Text009@1100356008 : TextConst 'ENU=FlowFields are not supported;ENG=FlowFields are not supported';
+
+    PROCEDURE AddSourceLineKey@1100356002(_id@1100356001 : Integer;_text@1100356000 : Text[250]);
+    VAR
+      LastEntryNo@1100356002 : Integer;
+    BEGIN
+      IF FINDLAST THEN
+        LastEntryNo := "Entry No.";
+      INIT;
+        "Entry No."   := LastEntryNo + 10000;
+        "Source Id"   := _id;
+        "Source Text" := _text;
+      INSERT;
+    END;
+
+    PROCEDURE AddCompareLineKey@1100356000(_id@1100356000 : Integer;_text@1100356001 : Text[250];_compbase@1100356002 : 'Booth,Id,Text');
+    VAR
+      SourceEntryNo@1100356003 : Integer;
+      LastEntryNo@1100356004 : Integer;
+    BEGIN
+      //_compbase ???:(
+      RESET;
+      SETRANGE("Source Id",_id);
+      IF FINDSET THEN
+        BEGIN
+          SourceEntryNo := "Entry No.";
+          IF "Compare Id" <> 0 THEN BEGIN
+            INIT;
+              "Entry No." := SourceEntryNo +1;
+              "Compare Id" := _id;
+              "Compare Text" := _text;
+            INSERT;
+          END ELSE BEGIN
+            "Compare Id" := _id;
+            "Compare Text" := _text;
+            MODIFY;
+          END;
+          EXIT;
+        END;
+
+      RESET;
+      SETRANGE("Source Text",_text);
+      IF FINDSET THEN
+        BEGIN
+          SourceEntryNo := "Entry No.";
+          IF "Compare Id" <> 0 THEN BEGIN
+            INIT;
+              "Entry No." := SourceEntryNo +1;
+              "Compare Id" := _id;
+              "Compare Text" := _text;
+            INSERT;
+          END ELSE BEGIN
+            "Compare Id" := _id;
+            "Compare Text" := _text;
+            MODIFY;
+          END;
+          EXIT;
+        END;
+
+      RESET;
+      IF FINDLAST THEN
+        LastEntryNo := "Entry No.";
+      INIT;
+        "Entry No."     := LastEntryNo + 10000;
+         "Compare Id"   := _id;
+         "Compare Text" := _text;
+      INSERT;
+    END;
+
+    PROCEDURE CalcResultKey@1100356001();
+    BEGIN
+      RESET;
+      IF FINDSET THEN
+        REPEAT
+          CASE TRUE OF
+            ("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text"): Result := Text001;
+            ("Source Id" = "Compare Id") AND ("Source Text" <> "Compare Text"): BEGIN
+                Result := Text002;
+                Critical := TRUE;
+              END;
+            ("Source Id" = 0) AND ("Source Text" = '' ): Result := Text003;
+            ("Compare Id" = 0) AND ("Compare Text" = ''): BEGIN
+              Result := Text004;
+              Critical := TRUE;
+            END;
+          END;
+          MODIFY;
+        UNTIL NEXT = 0;
+    END;
+
+    PROCEDURE AddSourceLineField@1100356006(_id@1100356001 : Integer;_text@1100356000 : Text[250];_type@1100356003 : Text[30];_len@1100356004 : Integer;_fType@1100356005 : Text[30]);
+    VAR
+      LastEntryNo@1100356002 : Integer;
+    BEGIN
+      IF FINDLAST THEN
+        LastEntryNo := "Entry No.";
+      INIT;
+        "Entry No."   := LastEntryNo + 10000;
+        "Source Id"   := _id;
+        "Source Text" := _text;
+        "Source Type" := _type;
+        "Source Len"  := _len;
+        "Source Field Class" := _fType;
+      INSERT;
+    END;
+
+    PROCEDURE AddCompareLineField@1100356005(_id@1100356000 : Integer;_text@1100356001 : Text[250];_type@1100356005 : Text[30];_len@1100356002 : Integer;_fType@1100356006 : Text[30]);
+    VAR
+      SourceEntryNo@1100356003 : Integer;
+      LastEntryNo@1100356004 : Integer;
+    BEGIN
+      RESET;
+      SETRANGE("Source Id",_id);
+      IF FINDSET THEN
+        BEGIN
+          SourceEntryNo := "Entry No.";
+          IF "Compare Id" <> 0 THEN BEGIN
+            INIT;
+              "Entry No." := SourceEntryNo +1;
+              "Compare Id" := _id;
+              "Compare Text" := _text;
+              "Compare Type" := _type;
+              "Compare Len"  := _len;
+              "Compare Field Class" := _fType;
+            INSERT;
+          END ELSE BEGIN
+            "Compare Id" := _id;
+            "Compare Text" := _text;
+            "Compare Type" := _type;
+            "Compare Len"  := _len;
+            "Compare Field Class" := _fType;
+            MODIFY;
+          END;
+          EXIT;
+        END;
+
+      RESET;
+      SETRANGE("Source Text",_text);
+      IF FINDSET THEN
+        BEGIN
+          SourceEntryNo := "Entry No.";
+          IF "Compare Id" <> 0 THEN BEGIN
+            INIT;
+              "Entry No." := SourceEntryNo +1;
+              "Compare Id" := _id;
+              "Compare Text" := _text;
+              "Compare Type" := _type;
+              "Compare Len"  := _len;
+              "Compare Field Class" := _fType;
+            INSERT;
+          END ELSE BEGIN
+            "Compare Id" := _id;
+            "Compare Text" := _text;
+            "Compare Type" := _type;
+            "Compare Len"  := _len;
+            "Compare Field Class" := _fType;
+            MODIFY;
+          END;
+          EXIT;
+        END;
+
+      RESET;
+      SETRANGE("Source Id",0,_id);
+      IF FINDLAST THEN BEGIN
+        LastEntryNo := "Entry No.";
+        RESET;
+        IF NEXT <> 0 THEN
+          LastEntryNo :=  LastEntryNo + ROUND(("Entry No." - LastEntryNo) / 2)
+        ELSE
+          LastEntryNo := "Entry No." + 10000;
+      END ELSE BEGIN
+        RESET;
+        IF FINDLAST THEN
+          LastEntryNo := "Entry No." + 10000;
+      END;
+
+      INIT;
+        "Entry No."     := LastEntryNo;
+         "Compare Id"   := _id;
+         "Compare Text" := _text;
+         "Compare Type" := _type;
+         "Compare Len"  := _len;
+         "Compare Field Class" := _fType;
+      INSERT;
+    END;
+
+    PROCEDURE CalcResultField@1100356004();
+    BEGIN
+      RESET;
+      IF FINDSET THEN
+        REPEAT
+          CASE TRUE OF  //basic tests - id, name
+            ("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text"): Result := Text001;
+
+            ("Source Id" = "Compare Id") AND ("Source Text" <> "Compare Text"): BEGIN
+                Result := Text002;
+                Critical := TRUE;
+              END;
+
+            ("Source Id" = 0) AND ("Source Text" = '' ) AND ("Compare Field Class" = 'Normal') AND (NOT Critical): BEGIN
+                Result := Text003;
+                //Critical := TRUE;
+              END;
+
+            ("Source Id" = 0) AND ("Source Text" = '' ) AND ("Compare Field Class" = 'FlowField') AND (NOT Critical): BEGIN
+                Result := Text009;
+                Critical := TRUE;
+              END;
+
+            ("Source Id" = 0) AND ("Source Text" = '' ) AND ("Compare Field Class" = 'FlowFilter') AND (NOT Critical): BEGIN
+                Result := Text001;
+              END;
+
+            ("Compare Id" = 0) AND ("Compare Text" = '') AND (NOT Critical): BEGIN
+              Result := Text004;
+              Critical := TRUE;
+            END;
+          END;
+
+          IF (("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text")) AND
+             ("Source Field Class" <> "Compare Field Class") AND (NOT Critical) THEN BEGIN
+              Result := Text005;
+              Critical := TRUE;
+          END;
+
+          IF (("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text")) AND
+             ("Source Type" <> "Compare Type")AND (NOT Critical) THEN BEGIN
+              Result := Text006;
+              Critical := TRUE;
+          END;
+
+          IF (("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text")) AND
+             ("Source Len" > "Compare Len") AND (NOT Critical) THEN BEGIN
+              Result := Text007;
+              Critical := TRUE;
+          END;
+
+          IF (("Source Id" = "Compare Id") AND ("Source Text" = "Compare Text")) AND
+             ("Source Len" < "Compare Len") AND ("Source Type" = "Compare Type") AND (NOT Critical) THEN BEGIN
+              //Critical := TRUE;
+              Result := Text008;
+          END;
+
+          MODIFY;
+        UNTIL NEXT = 0;
+    END;
+
+    BEGIN
+    {
+      Usage:
+       1, Crate a temp variable from this table
+       2, add the source lines
+       3, add the compare lines
+    }
+    END.
+  }
+}
+

@@ -1,0 +1,59 @@
+OBJECT Table 6 Customer Price Group
+{
+  OBJECT-PROPERTIES
+  {
+    Date=23/09/13;
+    Time=12:00:00;
+    Version List=NAVW17.10;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Customer Price Group;
+               FRA=Groupe prix client];
+    LookupPageID=Page7;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Code                ;Code10        ;CaptionML=[ENU=Code;
+                                                              FRA=Code];
+                                                   NotBlank=Yes }
+    { 2   ;   ;Price Includes VAT  ;Boolean       ;OnValidate=VAR
+                                                                SalesSetup@1000 : Record 311;
+                                                              BEGIN
+                                                                IF "Price Includes VAT" THEN BEGIN
+                                                                  SalesSetup.GET;
+                                                                  IF SalesSetup."VAT Bus. Posting Gr. (Price)" <> '' THEN
+                                                                    VALIDATE("VAT Bus. Posting Gr. (Price)",SalesSetup."VAT Bus. Posting Gr. (Price)");
+                                                                END;
+                                                              END;
+
+                                                   CaptionML=[ENU=Price Includes VAT;
+                                                              FRA=Prix TTC] }
+    { 5   ;   ;Allow Invoice Disc. ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Allow Invoice Disc.;
+                                                              FRA=Remise facture autoris‚e] }
+    { 6   ;   ;VAT Bus. Posting Gr. (Price);Code10;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[ENU=VAT Bus. Posting Gr. (Price);
+                                                              FRA=Gpe compta. march‚ TVA (prix)] }
+    { 10  ;   ;Description         ;Text50        ;CaptionML=[ENU=Description;
+                                                              FRA=D‚signation] }
+    { 7001;   ;Allow Line Disc.    ;Boolean       ;InitValue=Yes;
+                                                   CaptionML=[ENU=Allow Line Disc.;
+                                                              FRA=Autoriser remise ligne] }
+  }
+  KEYS
+  {
+    {    ;Code                                    ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+    { 1   ;DropDown            ;Code,Description,Allow Invoice Disc.,Allow Line Disc. }
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

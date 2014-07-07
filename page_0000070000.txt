@@ -1,0 +1,376 @@
+OBJECT Page 70000 Object Archive List
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Object Archive List;
+               ENG=Object Archive List];
+    InsertAllowed=No;
+    DeleteAllowed=No;
+    ModifyAllowed=No;
+    SourceTable=Table2000000001;
+    PageType=List;
+    PromotedActionCategoriesML=[ENU=New,Process,Report,Filter,Actions;
+                                ENG=New,Process,Report,Filter,Actions];
+    OnOpenPage=VAR
+                 ObjectArchiveSetup@1100356000 : Record 70006;
+               BEGIN
+                 //setup?
+                 IF NOT ObjectArchiveSetup.GET THEN
+                   BEGIN
+                     MESSAGE(Text001);
+                     PAGE.RUNMODAL(PAGE::"Object Archive Setup");
+                   END;
+                 SETRANGE(Type,Type::Table);
+               END;
+
+    OnAfterGetRecord=BEGIN
+                       ArchivedVersionsExists := CountArchivedVersions > 0;
+                     END;
+
+    ActionList=ACTIONS
+    {
+      { 1100356013;  ;ActionContainer;
+                      ActionContainerType=ActionItems }
+      { 1100356022;1 ;Action    ;
+                      Name=Versions;
+                      CaptionML=[ENU=Versions;
+                                 ENG=Versions];
+                      Promoted=Yes;
+                      Image=Versions;
+                      PromotedCategory=Process;
+                      OnAction=BEGIN
+                                 OpenVersionList;
+                               END;
+                                }
+      { 1100356023;1 ;Action    ;
+                      Name=Run;
+                      CaptionML=ENU=Run;
+                      Promoted=Yes;
+                      Image=Start;
+                      PromotedCategory=Process;
+                      OnAction=VAR
+                                 RecRef@1100356000 : RecordRef;
+                                 RecVar@1100356001 : Variant;
+                                 UrlString@1100356004 : Text;
+                                 ServerComputerName@1100356003 : Text;
+                                 ServerInstance@1100356002 : Text;
+                                 ServerPort@1100356005 : Text;
+                               BEGIN
+                                 IF ISNULL(Config) THEN
+                                   Config := Config.Instance;
+                                 ServerComputerName := Config.GetStringSetting('Server');
+                                 ServerInstance := Config.GetStringSetting('ServerInstance');
+                                 ServerPort := FORMAT(Config.ClientServicesPort);
+
+                                 CASE Type OF
+                                   Type::Table: BEGIN
+                                       //RecRef.OPEN(ID);
+                                       //RecVar := RecRef;
+                                       //PAGE.RUN(0,RecVar);
+                                       //RecRef.CLOSE;
+                                       UrlString :=
+                                         STRSUBSTNO('DynamicsNAV://%1:%4/%2/%3/runtable?table=%5',ServerComputerName,ServerInstance,COMPANYNAME,ServerPort,FORMAT(ID));
+                                       HYPERLINK(UrlString);
+                                     END;
+                                   Type::Page: PAGE.RUN(ID);
+                                   Type::Report : REPORT.RUN(ID);
+                                   Type::Codeunit : CODEUNIT.RUN(ID);
+                                   Type::XMLport : XMLPORT.RUN(ID);
+                                   Type::Query : BEGIN
+                                     UrlString :=
+                                       STRSUBSTNO('DynamicsNAV://%1:%4/%2/%3/runquery?query=%5',ServerComputerName,ServerInstance,COMPANYNAME,ServerPort,FORMAT(ID));
+                                     HYPERLINK(UrlString);
+                                   END;
+                                 END;
+                               END;
+                                }
+      { 1100356014;1 ;Action    ;
+                      Name=Archive;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Archive;
+                                 ENG=Archive];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=AddAction;
+                      PromotedCategory=Process;
+                      RunPageMode=View;
+                      OnAction=VAR
+                                 ObjectShadow@1100356000 : Record 70000;
+                               BEGIN
+                                 ObjectShadow.SeveVersion(Rec);
+                               END;
+                                }
+      { 1100356015;1 ;ActionGroup;
+                      Name=Object Type }
+      { 1100356026;2 ;Action    ;
+                      Name=Table;
+                      CaptionML=[ENU=Table;
+                                 ENG=Table];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Table;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::Table);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356016;2 ;Action    ;
+                      Name=Page;
+                      CaptionML=[ENU=Page;
+                                 ENG=Page];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=ListPage;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::Page);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356017;2 ;Action    ;
+                      Name=Report;
+                      CaptionML=[ENU=Report;
+                                 ENG=Report];
+                      Image=Report;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::Report);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356018;2 ;Action    ;
+                      Name=Codeunit;
+                      CaptionML=[ENU=Codeunit;
+                                 ENG=Codeunit];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=DesignCodeBehind;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::Codeunit);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356019;2 ;Action    ;
+                      Name=Query;
+                      CaptionML=[ENU=Query;
+                                 ENG=Query];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::Query);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356020;2 ;Action    ;
+                      Name=XMLport;
+                      CaptionML=[ENU=XMLport;
+                                 ENG=XMLport];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=XMLFile;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::XMLport);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356021;2 ;Action    ;
+                      Name=MenuSuite;
+                      CaptionML=[ENU=MenuSuite;
+                                 ENG=MenuSuite];
+                      Promoted=Yes;
+                      PromotedIsBig=Yes;
+                      Image=Home;
+                      PromotedCategory=Category4;
+                      OnAction=BEGIN
+                                 SETRANGE(Type,Type::MenuSuite);
+                                 CurrPage.UPDATE;
+                               END;
+                                }
+      { 1100356027;1 ;ActionGroup;
+                      Name=Object Functions;
+                      CaptionML=[ENU=Object Functions;
+                                 ENG=Object Functions] }
+      { 1100356028;2 ;Action    ;
+                      Name=Export;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Export;
+                                 ENG=Export];
+                      Promoted=Yes;
+                      Image=Export;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 SelectedObjects@1100356001 : Record 2000000001;
+                                 ObjectArchExpImpMgt@1100356000 : Codeunit 70001;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(SelectedObjects);
+                                 ObjectArchExpImpMgt.ExportObject(SelectedObjects);
+                               END;
+                                }
+      { 1100356029;2 ;Action    ;
+                      Name=Import;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Import;
+                                 ENG=Import];
+                      Promoted=Yes;
+                      Image=Import;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 ObjectArchExpImpMgt@1100356000 : Codeunit 70001;
+                               BEGIN
+                                 ObjectArchExpImpMgt.ImportObject;
+                               END;
+                                }
+      { 1100356030;2 ;Action    ;
+                      Name=Compile;
+                      ShortCutKey=F11;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Compile;
+                                 ENG=Compile];
+                      Promoted=Yes;
+                      Image=Action;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 SelectedObjects@1100356001 : Record 2000000001;
+                                 ObjectArchExpImpMgt@1100356000 : Codeunit 70001;
+                               BEGIN
+                                 CurrPage.SETSELECTIONFILTER(SelectedObjects);
+                                 ObjectArchExpImpMgt.CompileObject(SelectedObjects);
+                               END;
+                                }
+      { 1100356031;2 ;Action    ;
+                      Name=Design;
+                      ShortCutKey=Ctrl+D;
+                      Ellipsis=Yes;
+                      CaptionML=[ENU=Design;
+                                 ENG=Design];
+                      Promoted=Yes;
+                      Image=Design;
+                      PromotedCategory=Category5;
+                      OnAction=VAR
+                                 ObjectArchExpImpMgt@1100356000 : Codeunit 70001;
+                               BEGIN
+                                 ObjectArchExpImpMgt.DesignObject(Rec);
+                               END;
+                                }
+    }
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1100356002;2;Field  ;
+                SourceExpr=Type }
+
+    { 1100356003;2;Field  ;
+                SourceExpr=ID }
+
+    { 1100356012;2;Field  ;
+                Name=ArchivedVersions;
+                DrillDown=Yes;
+                CaptionML=ENU=Archived Versions;
+                SourceExpr=CountArchivedVersions;
+                Editable=FALSE;
+                Style=StrongAccent;
+                StyleExpr=ArchivedVersionsExists;
+                OnDrillDown=BEGIN
+                              OpenVersionList;
+                            END;
+                             }
+
+    { 1100356004;2;Field  ;
+                SourceExpr=Name }
+
+    { 1100356005;2;Field  ;
+                SourceExpr=Modified }
+
+    { 1100356006;2;Field  ;
+                SourceExpr=Date }
+
+    { 1100356007;2;Field  ;
+                SourceExpr=Time }
+
+    { 1100356008;2;Field  ;
+                SourceExpr=Compiled }
+
+    { 1100356009;2;Field  ;
+                SourceExpr="Version List" }
+
+    { 1100356010;2;Field  ;
+                SourceExpr=Locked }
+
+    { 1100356011;2;Field  ;
+                SourceExpr="Locked By" }
+
+    { 1100356024;0;Container;
+                ContainerType=FactBoxArea }
+
+    { 1100356025;1;Part   ;
+                CaptionML=[ENU=Last version Info;
+                           ENG=Last version Info];
+                SubPageView=SORTING(Type,Company Name,ID,Version No.)
+                            ORDER(Descending);
+                SubPageLink=Type=FIELD(Type),
+                            Company Name=FIELD(Company Name),
+                            ID=FIELD(ID);
+                PagePartID=Page70002;
+                PartType=Page }
+
+    { 1100356032;1;Part   ;
+                PartType=System;
+                SystemPartID=Notes }
+
+    { 1100356033;1;Part   ;
+                PartType=System;
+                SystemPartID=RecordLinks }
+
+  }
+  CODE
+  {
+    VAR
+      ArchivedVersionsExists@1100356000 : Boolean INDATASET;
+      Config@1100356001 : DotNet "'Microsoft.Dynamics.Nav.Types, Version=7.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'.Microsoft.Dynamics.Nav.Types.ConfigSettings" RUNONCLIENT;
+      Text001@1100356002 : TextConst 'ENU=Please setup the application.;ENG=Please setup the application.';
+
+    PROCEDURE CountArchivedVersions@1100356000() : Integer;
+    VAR
+      ObjectShadow@1100356000 : Record 70000;
+    BEGIN
+      ObjectShadow.SETRANGE(Type,Type);
+      ObjectShadow.SETRANGE("Company Name","Company Name");
+      ObjectShadow.SETRANGE(ID,ID);
+
+      EXIT(ObjectShadow.COUNT);
+    END;
+
+    PROCEDURE OpenVersionList@1100356001();
+    VAR
+      ObjectShadow@1100356000 : Record 70000;
+    BEGIN
+      ObjectShadow.SETRANGE(Type,Type);
+      ObjectShadow.SETRANGE("Company Name","Company Name");
+      ObjectShadow.SETRANGE(ID,ID);
+
+      IF NOT ObjectShadow.ISEMPTY THEN
+        PAGE.RUNMODAL(0,ObjectShadow);
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

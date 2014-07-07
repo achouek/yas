@@ -1,0 +1,49 @@
+OBJECT Table 70006 Object Archive Setup
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Object Archive Setup;
+               ENG=Object Archive Setup];
+  }
+  FIELDS
+  {
+    { 1   ;   ;Primary Key         ;Code10        ;CaptionML=[ENU=Primary Key;
+                                                              ENG=Primary Key] }
+    { 2   ;   ;Database Server     ;Text100       ;CaptionML=[ENU=Database Server;
+                                                              ENG=Database Server] }
+    { 3   ;   ;Database Name       ;Text100       ;CaptionML=[ENU=Database Name;
+                                                              ENG=Database Name] }
+    { 4   ;   ;Local Finsql directory;Text250     ;CaptionML=[ENU=Local Finsql directory;
+                                                              ENG=Local Finsql directory] }
+    { 5   ;   ;Save version before import;Boolean ;CaptionML=[ENU=Save version before import;
+                                                              ENG=Save version before import] }
+    { 6   ;   ;Save version befor export;Boolean  ;CaptionML=[ENU=Save version befor export;
+                                                              ENG=Save version befor export] }
+    { 7   ;   ;Save a FOB copy with arhive;Boolean;CaptionML=[ENU=Save a FOB copy with arhive;
+                                                              ENG=Save a FOB copy with arhive] }
+    { 8   ;   ;Show Import Overview;Boolean       ;CaptionML=[ENU=Show Import Overview;
+                                                              ENG=Show Import Overview] }
+  }
+  KEYS
+  {
+    {    ;Primary Key                             ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

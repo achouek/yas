@@ -1,0 +1,77 @@
+OBJECT Page 50010 ObjectExplorer
+{
+  OBJECT-PROPERTIES
+  {
+    Date=26/06/14;
+    Time=18:15:04;
+    Modified=Yes;
+    Version List=;
+  }
+  PROPERTIES
+  {
+    SourceTable=Table2000000001;
+    PageType=List;
+  }
+  CONTROLS
+  {
+    { 1000000000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1000000001;1;Group  ;
+                Name=Group;
+                GroupType=Repeater }
+
+    { 1000000002;2;Field  ;
+                SourceExpr=Type }
+
+    { 1000000003;2;Field  ;
+                SourceExpr="Company Name" }
+
+    { 1000000004;2;Field  ;
+                SourceExpr=ID }
+
+    { 1000000005;2;Field  ;
+                SourceExpr=Name }
+
+    { 1000000006;2;Field  ;
+                SourceExpr=Modified }
+
+    { 1000000007;2;Field  ;
+                SourceExpr=Compiled }
+
+    { 1000000008;2;Field  ;
+                SourceExpr="BLOB Reference" }
+
+    { 1000000009;2;Field  ;
+                SourceExpr="BLOB Size" }
+
+    { 1000000010;2;Field  ;
+                SourceExpr="DBM Table No." }
+
+    { 1000000011;2;Field  ;
+                SourceExpr=Date }
+
+    { 1000000012;2;Field  ;
+                SourceExpr=Time }
+
+    { 1000000013;2;Field  ;
+                SourceExpr="Version List" }
+
+    { 1000000014;2;Field  ;
+                SourceExpr=Caption }
+
+    { 1000000015;2;Field  ;
+                SourceExpr=Locked }
+
+    { 1000000016;2;Field  ;
+                SourceExpr="Locked By" }
+
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+

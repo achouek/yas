@@ -1,0 +1,165 @@
+OBJECT Page 1310 Mini Activities
+{
+  OBJECT-PROPERTIES
+  {
+    Date=10/11/13;
+    Time=12:00:00;
+    Version List=NAVW17.10.00.35701;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Activities;
+               FRA=Activit‚s];
+    SourceTable=Table9060;
+    PageType=CardPart;
+    ShowFilter=No;
+    OnInit=BEGIN
+             GettingStartedVisible := MiniGettingStartedMgt.IsGettingStartedVisible;
+             VideoVisible := GettingStartedVisible AND FileManagement.IsWebClient;
+             AutoPlayWelcomeVideo := VideoVisible AND MiniGettingStartedMgt.ShouldWelcomeVideoBePlayed;
+           END;
+
+    OnOpenPage=BEGIN
+                 RESET;
+                 IF NOT GET THEN BEGIN
+                   INIT;
+                   INSERT;
+                 END;
+                 SETFILTER("Due Date Filter",'>=%1',WORKDATE);
+                 SETFILTER("Overdue Date Filter",'<%1',WORKDATE);
+               END;
+
+    OnAfterGetCurrRecord=BEGIN
+                           IF GettingStartedVisible <> MiniGettingStartedMgt.IsGettingStartedVisible THEN BEGIN
+                             GettingStartedVisible := MiniGettingStartedMgt.IsGettingStartedVisible;
+                             VideoVisible := GettingStartedVisible AND FileManagement.IsWebClient;
+                             CurrPage.UPDATE;
+                           END;
+                         END;
+
+  }
+  CONTROLS
+  {
+    { 1   ;0   ;Container ;
+                ContainerType=ContentArea }
+
+    { 16  ;1   ;Group     ;
+                CaptionML=[ENU=Getting Started;
+                           FRA=Mise en route];
+                Visible=GettingStartedVisible;
+                GroupType=CueGroup;
+                ActionList=ACTIONS
+                {
+                  { 12      ;    ;Action    ;
+                                  Name=WelcomeIntroductionVideo;
+                                  CaptionML=[ENU=Welcome!;
+                                             FRA=Bienvenueÿ!];
+                                  ToolTipML=[ENU=Watch a short video to learn 5 things you need to know first.;
+                                             FRA=Watch a short video to learn 5 things you need to know first.];
+                                  Visible=VideoVisible;
+                                  Image=TileVideo;
+                                  OnAction=BEGIN
+                                             MiniGettingStartedMgt.PlayWelcomeVideo;
+                                           END;
+                                            }
+                  { 14      ;    ;Action    ;
+                                  Name=SettingupYourSystem;
+                                  CaptionML=[ENU=Setting up Your System;
+                                             FRA=Param‚trage de votre systŠme];
+                                  ToolTipML=[ENU=Watch a video to learn how to set up the system for your needs.;
+                                             FRA=Watch a video to learn how to set up the system for your needs.];
+                                  Visible=VideoVisible;
+                                  Image=TileVideo;
+                                  OnAction=BEGIN
+                                             MiniGettingStartedMgt.PlaySettingUpYourSystemVideo;
+                                           END;
+                                            }
+                  { 13      ;    ;Action    ;
+                                  Name=ManageYourBusiness;
+                                  CaptionML=[ENU=Manage Your Business;
+                                             FRA=Gestion de votre entreprise];
+                                  ToolTipML=[ENU=Learn about how to do your business tasks.;
+                                             FRA=Learn about how to do your business tasks.];
+                                  Image=TileHelp }
+                }
+                 }
+
+    { 10  ;1   ;Group     ;
+                CaptionML=[ENU=Sales;
+                           FRA=Ventes];
+                GroupType=CueGroup }
+
+    { 6   ;2   ;Field     ;
+                SourceExpr="Sales Quotes";
+                DrillDownPageID=Mini Sales Quotes List }
+
+    { 2   ;2   ;Field     ;
+                CaptionML=[ENU=Open Sales Invoices;
+                           FRA=Factures vente ouvertes];
+                SourceExpr="Sales Invoices";
+                DrillDownPageID=Mini Sales Invoice List }
+
+    { 3   ;2   ;Field     ;
+                CaptionML=[ENU=Unpaid Sales Invoices;
+                           FRA=Factures vente impay‚es];
+                SourceExpr="Unpaid Sales Invoices";
+                DrillDownPageID=Mini Posted Sales Invoices }
+
+    { 4   ;2   ;Field     ;
+                CaptionML=[ENU=Overdue Sales Invoices;
+                           FRA=Factures vente en souffrance];
+                SourceExpr="Overdue Sales Invoices";
+                DrillDownPageID=Mini Posted Sales Invoices }
+
+    { 9   ;1   ;Group     ;
+                CaptionML=[ENU=Purchases;
+                           FRA=Achats];
+                GroupType=CueGroup }
+
+    { 5   ;2   ;Field     ;
+                CaptionML=[ENU=Open Purchase Invoices;
+                           FRA=Factures achat ouvertes];
+                SourceExpr="Purchase Invoices";
+                DrillDownPageID=Mini Purchase Invoice List }
+
+    { 8   ;2   ;Field     ;
+                CaptionML=[ENU=Unpaid Purchase Invoices;
+                           FRA=Factures achat impay‚es];
+                SourceExpr="Unpaid Purchase Invoices";
+                DrillDownPageID=Mini Posted Purchase Invoices }
+
+    { 7   ;2   ;Field     ;
+                CaptionML=[ENU=Overdue Purchase Invoices;
+                           FRA=Factures achat ‚chues];
+                SourceExpr="Overdue Purchase Invoices";
+                DrillDownPageID=Mini Posted Purchase Invoices }
+
+    { 15  ;1   ;Group     ;
+                Visible=AutoPlayWelcomeVideo;
+                GroupType=Group }
+
+    { 11  ;2   ;Field     ;
+                Name=PageReady;
+                ControlAddIn=[Microsoft.Dynamics.Nav.Client.PageReady;PublicKeyToken=31bf3856ad364e35] }
+
+  }
+  CODE
+  {
+    VAR
+      MiniGettingStartedMgt@1001 : Codeunit 1321;
+      FileManagement@1003 : Codeunit 419;
+      GettingStartedVisible@1002 : Boolean INDATASET;
+      VideoVisible@1000 : Boolean INDATASET;
+      AutoPlayWelcomeVideo@1004 : Boolean INDATASET;
+
+    EVENT PageReady@-11::AddInReady@0();
+    BEGIN
+      IF FileManagement.IsWebClient THEN
+        MiniGettingStartedMgt.PlayWelcomeVideoOnFirstLogin;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

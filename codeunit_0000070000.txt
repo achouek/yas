@@ -1,0 +1,210 @@
+OBJECT Codeunit 70000 Object Archive SQL Mgt.
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    OnRun=VAR
+            TestField@1100356000 : TEMPORARY Record 2000000041;
+          BEGIN
+            //test
+            {
+            Init(50001);
+            TestField.TableNo := 50001;
+            TestField."No." := 9;
+            TestField.TableName := 'Test table 2';
+            TestField.FieldName := 'F 9';
+            TestField.Type := TestField.Type::Text;
+            TestField.Len := 30;
+            AddNewField(TestField);
+
+            TestField.FieldName := 'F 10';
+            TestField.Type := TestField.Type::Decimal;
+            TestField.Len := 0;
+            AddNewField(TestField);
+
+
+            MESSAGE(SQLCommand);
+
+            ImplementChanges;
+            }
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      ADOConn@1100356001 : DotNet "'System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.SqlClient.SqlConnection";
+      ADOCommand@1100356000 : DotNet "'System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.SqlClient.SqlCommand";
+      IsCompanyPerData@1100356002 : Boolean;
+      SQLCommand@1100356003 : Text;
+      Text001@1100356008 : TextConst 'ENU=Unknown nav data type.;ENG=Unknown nav data type.';
+      Text002@1100356009 : TextConst 'ENU=Lenght can`t be 0 with %1 data type.;ENG=Lenght can`t be 0 with %1 data type.';
+      SqlCharConvert1@1100356006 : TextConst 'ENU=."\/''%][';
+      SqlCharConvert2@1100356007 : TextConst 'ENU=________';
+      SqlAddFieldCompany@1100356004 : TextConst 'ENU="ALTER TABLE [dbo].[%1$%2] ADD [%3] %4 ;"';
+      SqlAddFieldGen@1100356005 : TextConst 'ENU="ALTER TABLE [dbo].[%1] ADD [%2] %3 ;"';
+      SQLTypeConv1@1100356010 : TextConst 'ENU=%1(%2)  NOT NULL';
+      SQLTypeConv2@1100356013 : TextConst 'ENU=%1 NULL';
+      SQLTypeConv3@1100356014 : TextConst 'ENU=%1 NOT NULL';
+      SqlChangeFieldCompany@1100356012 : TextConst 'ENU="ALTER TABLE [dbo].[%1$%2] ALTER COLUMN [%3] %4 ;"';
+      SqlChangeFieldGen@1100356011 : TextConst 'ENU="ALTER TABLE [dbo].[%1] ALTER COLUMN [%2] %3 ;"';
+
+    PROCEDURE Init@1100356005(_TableNo@1100356000 : Integer);
+    VAR
+      TableInformation@1100356001 : Record 2000000028;
+    BEGIN
+      ADOConn := ADOConn.SqlConnection(GetConnString);
+      ADOConn.Open;
+
+      SQLCommand := '';
+      ADOCommand := ADOConn.CreateCommand();
+
+      TableInformation.SETRANGE("Table No.",_TableNo);
+      TableInformation.SETRANGE("Company Name",COMPANYNAME);
+      IsCompanyPerData := NOT TableInformation.ISEMPTY;
+
+      {
+      IF TableInformation.FINDSET THEN   //realy???
+        REPEAT
+          MESSAGE(TableInformation."Company Name");
+        UNTIL TableInformation.NEXT = 0;
+
+      IF TableInformation.COUNT > 1 THEN
+        IsCompanyPerData := TRUE
+      ELSE
+        IsCompanyPerData := FALSE;
+      }
+    END;
+
+    PROCEDURE ChangeFieldLength@1100356000(_Field@1100356000 : Record 70002);
+    VAR
+      Company@1100356001 : Record 2000000006;
+    BEGIN
+      IF IsCompanyPerData THEN
+        BEGIN
+          Company.FINDSET;
+          REPEAT
+            //                         %1          %2                        %3        %4
+            //ALTER TABLE [dbo].[CRONUS UK Ltd_$Test table 2] ALTER COLUMN [F 9] NVARCHAR(30) NOT NULL
+            //ALTER TABLE [dbo].[%1$%2] ALTER COLUMN [%3] %4 NOT NULL
+            SQLCommand += STRSUBSTNO(SqlChangeFieldCompany,SqlText(Company.Name),SqlText(_Field.TableName),SqlText(_Field.FieldName),SqlDataTypeWithLength(_Field."Type Text",_Field.Len));
+          UNTIL Company.NEXT = 0;
+        END ELSE BEGIN
+            SQLCommand += STRSUBSTNO(SqlChangeFieldGen,SqlText(_Field.TableName),SqlText(_Field.FieldName),SqlDataTypeWithLength(_Field."Type Text",_Field.Len));
+        END;
+    END;
+
+    PROCEDURE AddNewField@1100356001(_Field@1100356000 : Record 70002);
+    VAR
+      Company@1100356001 : Record 2000000006;
+    BEGIN
+      IF IsCompanyPerData THEN
+        BEGIN
+          Company.FINDSET;
+          REPEAT
+            //                   (       %1   ) (    %2     )     ( %3) (      %4    )
+            //ALTER TABLE [dbo].[CRONUS UK Ltd_$Test table 2] ADD [F 9] [NVARCHAR](20) NOT NULL;
+            //ALTER TABLE [dbo].[%1$%2] ADD [%3] %4 NOT NULL;
+            SQLCommand += STRSUBSTNO(SqlAddFieldCompany,SqlText(Company.Name),SqlText(_Field.TableName),SqlText(_Field.FieldName),SqlDataTypeWithLength(_Field."Type Text",_Field.Len));
+          UNTIL Company.NEXT = 0;
+        END ELSE BEGIN
+            SQLCommand += STRSUBSTNO(SqlAddFieldGen,SqlText(_Field.TableName),SqlText(_Field.FieldName),SqlDataTypeWithLength(_Field."Type Text",_Field.Len));
+        END;
+    END;
+
+    PROCEDURE ImplementChanges@1100356003();
+    BEGIN
+      IF SQLCommand <> '' THEN
+        BEGIN
+          ADOCommand.CommandText := SQLCommand;
+
+          ADOCommand.CommandType := 1;
+          ADOCommand.CommandTimeout := 0;
+          ADOCommand.ExecuteReader;
+        END;
+      ADOConn.Close;
+    END;
+
+    PROCEDURE GetConnString@1100356006() : Text[250];
+    VAR
+      ObjectArchiveSetup@1100356000 : Record 70006;
+    BEGIN
+      ObjectArchiveSetup.GET;
+      ObjectArchiveSetup.TESTFIELD("Database Server");
+      ObjectArchiveSetup.TESTFIELD("Database Name");
+      EXIT('Server='+ObjectArchiveSetup."Database Server"+';Database='+ObjectArchiveSetup."Database Name"+';Trusted_Connection=True;');
+    END;
+
+    LOCAL PROCEDURE SqlText@1100356007(_InString@1100356000 : Text[100]) : Text[100];
+    BEGIN
+      EXIT(CONVERTSTR(_InString,SqlCharConvert1,SqlCharConvert2));
+    END;
+
+    LOCAL PROCEDURE TranslateDataType@1100356010(_NavType@1100356000 : Text) : Text;
+    BEGIN
+      CASE _NavType OF
+        'Integer' : EXIT('[int]');
+        'Date' : EXIT('[datetime]');
+        'Time' : EXIT('[datetime]');
+        'Decimal' : EXIT('[decimal](38, 20)');
+        'Text' : EXIT('nvarchar');
+        'Code' : EXIT('[nvarchar]');
+        'Binary' : EXIT('[varbinary]');
+        'BLOB' : EXIT('[image]');
+        'Boolean' : EXIT('[tinyint]');
+        'Option' : EXIT('[int]');
+        'BigInteger' : EXIT(' [bigint]');
+        'Duration' : EXIT('[bigint]');
+        'GUID' : EXIT('[uniqueidentifier]');
+        'DateTime' : EXIT('datetime');
+        'DateFormula' : EXIT('[varchar]');
+        'RecordID' : EXIT('[varbinary](448)');
+        'TableFilter' : EXIT('[varbinary](504)');
+        ELSE ERROR(Text001);
+      END;
+    END;
+
+    LOCAL PROCEDURE SqlDataTypeWithLength@1100356012(_NavType@1100356000 : Text;_Length@1100356001 : Integer) : Text;
+    BEGIN
+      IF (_NavType IN ['Binary','Code','Text']) THEN
+        BEGIN
+          IF _Length = 0 THEN ERROR(Text002,_NavType);
+          EXIT(STRSUBSTNO(SQLTypeConv1,TranslateDataType(_NavType),FORMAT(_Length)));
+        END ELSE
+          IF _NavType IN ['BLOB'] THEN
+            EXIT(STRSUBSTNO(SQLTypeConv2,TranslateDataType(_NavType)))  //NULL
+          ELSE
+            EXIT(STRSUBSTNO(SQLTypeConv3,TranslateDataType(_NavType)));  //NOT NULL
+    END;
+
+    EVENT ADOCommand@1100356000::StatementCompleted@57(sender@1100356001 : Variant;e@1100356000 : DotNet "'System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.StatementCompletedEventArgs");
+    BEGIN
+    END;
+
+    EVENT ADOCommand@1100356000::Disposed@58(sender@1100356001 : Variant;e@1100356000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.EventArgs");
+    BEGIN
+    END;
+
+    EVENT ADOConn@1100356001::InfoMessage@48(sender@1100356001 : Variant;e@1100356000 : DotNet "'System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.SqlClient.SqlInfoMessageEventArgs");
+    BEGIN
+    END;
+
+    EVENT ADOConn@1100356001::StateChange@49(sender@1100356001 : Variant;e@1100356000 : DotNet "'System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.Data.StateChangeEventArgs");
+    BEGIN
+    END;
+
+    EVENT ADOConn@1100356001::Disposed@50(sender@1100356001 : Variant;e@1100356000 : DotNet "'mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'.System.EventArgs");
+    BEGIN
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

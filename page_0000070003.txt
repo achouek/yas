@@ -1,0 +1,114 @@
+OBJECT Page 70003 Object Version FactBox
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    CaptionML=[ENU=Object Version FactBox;
+               ENG=Object Version FactBox];
+    SourceTable=Table70000;
+    PageType=CardPart;
+    OnAfterGetRecord=VAR
+                       Key@1100356000 : Record 2000000063;
+                       Field@1100356001 : Record 2000000041;
+                     BEGIN
+                       ShowTableInfo := FALSE;
+                       IF Type = Type::Table THEN
+                         BEGIN
+                           ShowTableInfo := TRUE;
+                           Key.SETRANGE(TableNo,ID);
+                           Field.SETRANGE(TableNo,ID);
+                           NoOfCurrFields := Field.COUNT;
+                           NoOfCurrKeys := Key.COUNT;
+                           ValidRestoreApproxF := NoOfCurrFields <> "No. Of Fields";
+                           ValidRestoreApproxK := NoOfCurrKeys <> "No. Of Keys";
+                         END;
+                     END;
+
+  }
+  CONTROLS
+  {
+    { 1100356000;0;Container;
+                ContainerType=ContentArea }
+
+    { 1100356005;1;Group  ;
+                Name=GeneralInfo;
+                CaptionML=ENU=General Information;
+                GroupType=Group }
+
+    { 1100356001;2;Field  ;
+                CaptionML=[ENU=Archived at;
+                           ENG=Archived at];
+                SourceExpr=DT2DATE("Archived at" ) }
+
+    { 1100356009;2;Field  ;
+                CaptionML=ENU=- Time;
+                SourceExpr=FORMAT(DT2TIME("Archived at" ),0,'<Hours24>:<Minutes,2>') }
+
+    { 1100356002;2;Field  ;
+                SourceExpr="Archived by" }
+
+    { 1100356003;2;Field  ;
+                CaptionML=[ENU=Last restore;
+                           ENG=Last restore];
+                SourceExpr=DT2DATE("Last restore") }
+
+    { 1100356012;2;Field  ;
+                CaptionML=[ENU=" - Time";
+                           ENG=" - Time"];
+                SourceExpr=FORMAT(DT2TIME("Last restore"),0,'<Hours24>:<Minutes,2>') }
+
+    { 1100356013;2;Field  ;
+                SourceExpr="Restored by" }
+
+    { 1100356004;2;Field  ;
+                SourceExpr="Restore count" }
+
+    { 1100356006;1;Group  ;
+                Name=TableInfo;
+                CaptionML=ENU=Table Info.;
+                Visible=ShowTableInfo;
+                GroupType=Group }
+
+    { 1100356007;2;Field  ;
+                SourceExpr="No. Of Fields";
+                Style=Attention;
+                StyleExpr=ValidRestoreApproxF }
+
+    { 1100356008;2;Field  ;
+                SourceExpr="No. Of Keys";
+                Style=Attention;
+                StyleExpr=ValidRestoreApproxK }
+
+    { 1100356010;2;Field  ;
+                CaptionML=ENU=Curr. Fields;
+                SourceExpr=NoOfCurrFields;
+                Style=Attention;
+                StyleExpr=ValidRestoreApproxF }
+
+    { 1100356011;2;Field  ;
+                CaptionML=ENU=Curr. Keys;
+                SourceExpr=NoOfCurrKeys;
+                Style=Attention;
+                StyleExpr=ValidRestoreApproxK }
+
+  }
+  CODE
+  {
+    VAR
+      ShowTableInfo@1100356000 : Boolean INDATASET;
+      NoOfCurrFields@1100356001 : Integer;
+      NoOfCurrKeys@1100356002 : Integer;
+      ValidRestoreApproxF@1100356003 : Boolean INDATASET;
+      ValidRestoreApproxK@1100356004 : Boolean INDATASET;
+
+    BEGIN
+    END.
+  }
+}
+

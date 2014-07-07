@@ -1,0 +1,56 @@
+OBJECT Table 70001 Object Metadata Shadow
+{
+  OBJECT-PROPERTIES
+  {
+    Date=08/11/13;
+    Time=16:00:00;
+    Modified=Yes;
+    Version List=OBJ01.3;
+  }
+  PROPERTIES
+  {
+    DataPerCompany=No;
+    CaptionML=[ENU=Object Metadata;
+               ENG=Object Metadata];
+  }
+  FIELDS
+  {
+    { 3   ;   ;Object Type         ;Option        ;CaptionML=[ENU=Object Type;
+                                                              ENG=Object Type];
+                                                   OptionCaptionML=[ENU=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber;
+                                                                    ENG=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber];
+                                                   OptionString=TableData,Table,,Report,,Codeunit,XMLport,MenuSuite,Page,Query,System,FieldNumber }
+    { 6   ;   ;Object ID           ;Integer       ;TableRelation=Object.ID WHERE (Type=FIELD(Object Type));
+                                                   TestTableRelation=No;
+                                                   CaptionML=[ENU=Object ID;
+                                                              ENG=Object ID] }
+    { 9   ;   ;Metadata            ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=Metadata;
+                                                              ENG=Metadata] }
+    { 15  ;   ;User Code           ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=User Code;
+                                                              ENG=User Code] }
+    { 18  ;   ;User AL Code        ;BLOB          ;Volatile=Yes;
+                                                   CaptionML=[ENU=User AL Code;
+                                                              ENG=User AL Code] }
+    { 27  ;   ;Metadata Version    ;Integer       ;Volatile=Yes;
+                                                   CaptionML=[ENU=Metadata Version;
+                                                              ENG=Metadata Version] }
+    { 70000;  ;Version No.         ;Integer       ;CaptionML=[ENU=Version No.;
+                                                              ENG=Version No.] }
+  }
+  KEYS
+  {
+    {    ;Object Type,Object ID,Version No.       ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    END.
+  }
+}
+
